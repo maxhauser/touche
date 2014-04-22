@@ -1,0 +1,35 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "description": "",
+  "main": "Gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "envify": "^1.2.1",
+    "react": "^0.10.0",
+    "style-loader": "^0.6.3",
+    "expose-loader": "^0.5.3",
+    "minimist": "0.0.8",
+    "file-loader": "^0.5.1",
+    "chai": "^1.9.1",
+    "jshint-loader": "^0.6.0",
+    "gulp-mocha": "^0.4.1",
+    "gulp-util": "^2.2.14",
+    "gulp-rimraf": "0.0.9",
+    "gulp-inject": "^0.4.1",
+    "gulp": "^3.6.0",
+    "react-tools": "^0.10.0",
+    "css-loader": "^0.6.12",
+    "webpack": "^1.1.2",
+    "compression-webpack-plugin": "^0.1.1",
+    "script-loader": "^0.5.2"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "",
+  "license": "MIT"
+}

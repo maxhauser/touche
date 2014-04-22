@@ -1,0 +1,170 @@
+Was ist ATCP?
+=============
+ATCP ist ein sogenanntes MUD-Protokoll, mit dem Informationen von Avalon
+an den Client und zurueck geschickt werden kann, ohne dass ein Spieler
+davon mitbekommen. Der MUD-Client muss dazu ATCP-faehig sein (Mudlet,
+CMUD, Mushclient mit Plugins).
+Hier findet man eine ausfuehrlichere Beschreibung:
+  http://xtiansavalon.wordpress.com/2010/07/27/introducing-atcp/
+ATCP ist der Vorgaenger von GMCP.
+Unsere ATCP Unterstuetzung ist noch stark im Aufbau und wird Dank staendigem
+Austausch mit Spielern stets verbessert und ausgebaut. Setze Deine
+Ideen und Dein Feedback zu ATCP einfach als Fehler ab.
+Liste der Aenderungen:
+======================
+14.02.2014  Neu: Gruppen-Rufe gehen ueber ATCP (und gelten dort als "Gruppe"-
+                 Kanal.
+10.06.2013  Neu: Client fragt: ava_req_mapper und bekommt Mapper-Infos
+                 zum Raum (auch wenn diese beim Laufen nicht kommen)
+04.02.2012  Aenderung, neues Format: Avalon.Alter <Text>\n<Alter als Zahl>
+28.01.2012: Neu: Server sendet: Avalon.EP
+            Aenderung: Avalon.Level wird bei jedem Levelup geschickt
+13.10.2011: Aenderung: Manche (Stadt-) Karten von Elandor gelten
+                       nicht mehr als "Grids".
+            Aenderung: Umgekehrte y Koordinaten sollten dadurch nicht
+                       mehr auftreten (siehe 08.10.2011).
+11.10.2011: neu: Server sendet: Avalon.Site Bank Ashar
+                                Avalon.Site Basar Ashar, Semanym Oney Ashar
+                 (Beispiele)
+                 In Avalon.Site stehen Informationen, die man fuer ein
+                 "goto" Skript als Zielpunkte verwerten kann.
+                 Dies sind erstmal Stadtzentren und ein paar wichtige
+                 Laeden.
+                 Kommentar: Avalon.Site wird nie alle Informationen
+                            und nie Informationen zu geheimen Orten haben,
+                            es soll lediglich dabei helfen, dem Mapper
+                            die ueblichsten Reiseziele beizubringen.
+08.10.2011: bugfix: Icon16 in Corona war falsch
+            Kommentare zu den Mapper-Daten: [update 13.10.]
+               Nicht alle Karten (Subdomainkarten) besitzen x/y Koordinaten:
+               Koordinaten sind zwingend fuer "grid"-Karten,
+               [update:] nicht-Grid Karten versenden keine x/y Koordinaten.
+               [update:] Bei allen Grid-Karten sind die Koordinaten
+               gleich orientiert.
+07.10.2011: bugfix: AvalonExits lieferte falsche Daten.
+12.09.2011: ACHTUNG: ATCP wird nun automatisch aktiviert.
+                     Es ist nun kein "term atcpstart" mehr noetig.
+            ACHTUNG: Mapper-Informationen werden per ATCP nur noch
+                     verschickt, wenn ava_set_mapper 1 gesendet wurde,
+                     siehe unten!
+08.05.2011: neu: ATCP Client sendet: ava_req_graphics_status
+                 Server antwortet: Avalon.GrafikVermeiden 1
+                 oder 0
+            geaendert: Avalon.Inv hat anderes Format, s.u.
+            geaendert: Avalon.IID/DBID schickt den NAmen des Objektes mit
+            neu: Bei einem "ava_req_update" wird auch geschickt:
+                   Avalon.Alter,Avalon.Name,Avalon.VollName,
+                   Avalon.Gilde,Avalon.Zuenfte,Avalon.Gruppe,
+                   Avalon.Level
+15.04.2011: neu: Mit den Kommandos (nicht ueber ATCP) "iid" und "dbid" kommt 
+                 man auch im normalen Spielfluss an die IID, bzw. DBID.
+            neu: Mit "terminal update" kann man dem Clienten nochmal alle
+                 Werte des Spielers (und alle Terminalwerte) zuschicken.
+            neu: ATCP Client sendet: "ava_req_update": wie "terminal update"
+       
+11.04.2011: IIDs von Gegenstaenden sind nun wirklich persistent.
+06.02.2011: bugfix: Areanamen und Koordinaten auf Inseln stimmen nun wieder
+24.01.2011: neu: Noch einen Bug in den Instance-IDs mancher Objekte
+                 behoben, wenn diese identisch mit der DB-ID waren.
+                 (betrifft _nicht_ Raeume)
+                 Einige Gegenstaende duerften jetzt also nochmal eine
+                 neue I-ID bekommen. Das wars dann hoffentlich bald.
+24.01.2011: neu: Client sendet: "ava_set_noinband_channel" schaltet alle
+                 Kanalmeldungen im normalen MUD-Output aus.
+                 Dies geht nur, wenn man die Kanalmeldungen per ATCP ueber 
+                 "ava_set_channel 1" eingeschaltet hatte (Sicherung)
+            typo: im Absatz zum 22.01. Die Meldung lautet: "ava_set_channel"
+            neu: Client sendet: "ava_set_comm 1" / "ava_set_noinband_comm 1"
+                 Server antwortet: "Avalon.Comm <was> <text>
+                --> fuer Gespraeche in demselben Raum
+                     <was> = "SAGEN" oder "FLUESTERN"
+            neu: Client sendet: "ava_set_rcomm 1" / "ava_set_noinband_rcomm 1"
+                 Server antwortet: "Avalon.RComm <was> <text>
+                 --> fuer Gespraeche per Rede
+                 Beachte das "R" in rcomm / RComm
+            neu: Dito: "ava_set_soul 1" / "ava_set_noinband_soul 1",
+                       "Avalon.Soul <was> <text>"
+                 --> <was> hier erstmal ignorieren
+            neu: Dito: "ava_set_rsoul 1" / "ava_set_noinband_rsoul 1",
+                       "Avalon.RSoul <was> <text>
+                 --> <was> hier erstmal ignorieren
+22.01.2011: Vorwarnung: Um in Zukunft die ganzen Mapperinfos zu bekommen, muss
+                        man zuerst einmal "ava_set_mapper 1" ans MUD schicken.
+                        (schliesst Exits, RoomID, Icon16, Terrain-Daten, etc ein)
+22.01.2011: neu: wenn der client schickt: "set_ava_channel 1"
+                 wird der Server jede Kanalmeldung ueber den ATCP-Kanal verschicken:
+                 Avalon.Channel <kanal> <text>
+            Ausschalten kann man das wieder per "set_ava_channel 0"
+            (beachte den Unterschied zwischen den "set_ava_xxx" und "req_ava_xxx"
+             Kommandos)
+21.01.2011: neu: Avalon.Icon16 <icon> 
+                 liefert beim Raumbetreten das Kartensymbol des aktuellen Raumes
+                 in 16 ANSI-Farben, falls verfuegbar
+16.01.2011: Auf "Grids" sieht die Room-ID jetzt so aus:
+                 Avalon.RoomID <id> <area> x=X y=Y
+            und in solchen Raeumen werden die Ausgaenge nicht mehr mit ausgegeben,
+            weil im Allgemeinen die Topologie klar ist.
+08.01.2011: Vorsicht: Die DB-ID von Raeumen hat sich geaendert!
+            neu: Avalon.RoomID <id> <area>
+                 wird jetzt beim Betreten jedes Raumes geschickt
+                 (<id> ist aequivalent zu "Avalon.Database hier")
+                 Die <area> ist die Gegend (zB. Stadt, Kontinentkarte, etc.).
+            neu: Avalon.Exits n=hash1,w=hash2,...
+                 wird beim Betreten jedes Raumes geschickt.
+            Avalon.Ausgaenge wird nicht mehr verwendet!
+15.10.2010 neu: Meldungen fuer Aenderungen der Max-TP/SP/AP-Werte
+27.4.2010: neu: ava_req_inv <id>
+                ava_req_container <id>
+23.4.2010: neu: ava_req_iid hier
+10.3.2010: Die Messags werden sich demnaechst nochmal radikal aendern.
+           Die DB-IDs werden nochmal uebearbeitet.
+ATCP ist ein MUD-Protokoll, mit dem man Daten "ausserhalb des normalen
+Datenflussen" uebertragen kann, so dass sie im Spielverlauf nicht 
+erscheinen.
+Bekannte Clienten, die dies unterstuetzen:
+Avalon versteht folgende ATCP Kommandos:
+Der Server schickt (in Beispielen):
+  Char.Name xtian\nGott Xtian
+  Room.Brief Dies ist ein Raum
+  Avalon.Ausgaenge w,o,no,h,ra,ru,huette
+  Avalon.TP 404
+  Avalon.SP 96    (beachte SP statt ZP)
+  Avalon.MP 2000
+  Avalon.AP 130
+  Avalon.MAX_TP 404
+  Avalon.MAX_SP 305
+  Avalon.MAX_AP 130
+Der Client kann schicken:
+  ava_req_iid WAS
+    Dies parsed <WAS> wie im Spiel (zb "mich") und schickt zurueck:
+      Avalon.Instance WAS IID
+    IID ist die Instance-ID und ist einmalig fuer dieses Objekt und 
+    bleibt ueber Logouts hinweg erhalten.
+    WAS kann mehrere Woerter enthalten.
+    Wenn <WAS> == "hier" (ohne die Hochkommata) wird der aktuelle Raum 
+    verwendet.
+  ava_req_dbid WAS
+    Aehnlich zur Instance-ID wird hier die Datenbank-ID angefragt.
+    Die Antwort des Servers ist:
+      Avalon.Database WAS DBID
+    Die Database-ID ist nicht fuer jedes Objekt unterschiedlich, sondern
+    nur fuer aehnliche Objekte. Sie ist ebenfalls persistent, also
+    ueber Logouts erhalten.
+    Wenn <WAS> == "hier" (ohne die Hochkommata) wird der aktuelle Raum 
+    verwendet.
+  ava_req_inv WAS
+    Gibt eine Liste von IIDs zurueck aller Gegenstaende in WAS
+    Die Antwort des Servers ist:
+      Avalon.Inv WAS LISTE
+        wobei LISTE aus den Eintraege: 
+          IID "Name"  
+       besteht. Beachte as Leerzeichen
+  ava_req_container WAS
+    Gibt eine Liste von IIDs zurueck aller Container in WAS
+    (Container haben wiederum Inhalt)
+    Die Antwort des Servers ist:
+      Avalon.Container WAS LISTE
+Ausserdem verwendet Avalon:
+  Auth.Request
+  Client.Compose
+aber diese Kommandos werden direkt im Client verarbeitet.

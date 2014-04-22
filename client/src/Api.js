@@ -1,0 +1,226 @@
+var _ = require('lodash');
+var Dispatcher = require('./AppDispatcher');
+var env = require('./Environment');
+var roomdb = require('./roomdb');
+var Pathfinder = require('./Pathfinder');
+
+var tickers = {};
+var actions = {};
+var aliases = {};
+var delays = {};
+var macros = {};
+var gags = {};
+var substitutes = {};
+
+function getText(line) {
+	var text = "";
+	line.forEach(function(ast) {
+		if (ast.type === 'text')
+			text += ast.text;
+	});
+	return text;
+}
+var Api;
+
+var mych = env.linePipeline.add();
+mych.receive(line => {
+	var text = getText(line);
+
+	if (_.any(gags, gag => gag.test(text))) {
+		console.log('GAGGED', text);
+		return;
+	}
+
+	mych.send(line);
+
+	_.forEach(actions, function(action) {
+		var match = action.regex.exec(text);
+		if (match)
+			action.handler.apply(undefined, match);
+	});
+});
+
+Api = {
+	env: env,
+	send: function(cmd) {
+		Dispatcher.fire('global.send', 'cmd', cmd);
+	},
+	echo: function(text) {
+		Dispatcher.fire('global.ast', {type: 'echo', text: text});
+		Dispatcher.fire('global.ast', {type: 'flush' });
+	},
+	ticker: function(name, seconds, handler) {
+		var interval = window.setInterval(handler, seconds * 1000);
+		var ticker = tickers[name];
+		if (ticker) {
+			window.clearInterval(ticker);
+		}
+		tickers[name] = interval;
+	},
+	unticker: function(name) {
+		var ticker = tickers[name];
+		if (ticker) {
+			delete tickers[name];
+			window.clearInterval(ticker);
+		}
+	},
+	action: function(search, commands, priority) {
+		actions[search] = { handler: commands, priority: priority, regex: new RegExp(search) };
+	},
+	unaction: function(search){
+		delete actions[search];
+	},
+	alias: function(name, command) {
+		aliases[name] = command;
+	},
+	unalias: function(name) {
+		delete aliases[name];
+	},
+	delay: function(name, seconds, handler) {
+		if ('function' === typeof seconds) {
+			handler = seconds;
+			seconds = name;
+			name = undefined;
+		}
+
+		var timeout = window.setTimeout(handler, seconds * 1000);
+		if (name) {
+			var delay = delays[name];
+			if (delay)
+				window.clearTimeout(delay);
+			delays[name] = timeout;
+		}
+	},
+	undelay: function(name) {
+		var delay = delays[name];
+		if (delay) {
+			delete delays[name];
+			window.clearTimeout(delay);
+		}
+	},
+	macro: function(keysequence, commands) {
+		macros[keysequence] = commands;
+	},
+	unmacro: function(keysequence) {
+		delete macros[keysequence];
+	},
+	gag: function(search) {
+		gags[search] = new RegExp(search);
+	},
+	ungag: function(search) {
+		delete gags[search];
+	},
+	substitute: function(text, newtext) {
+		substitutes[text] = newtext;
+	},
+	unsubstitute: function(text) {
+		delete substitutes[text];
+	},
+	map: {
+		setIcon: function(icon) {
+			roomdb.current().icon = icon;
+			Dispatcher.fire('room.changed');
+		},
+		find: function(dest) {
+			var room = roomdb.find(dest);
+			if (room)
+				return roomdb.get(room);
+		},
+		pathTo: function(dest) {
+			var target = roomdb.find(dest);
+			if(!target)
+				throw new Error('Cannot find "' + dest + '".');
+
+			var finder = new Pathfinder({
+				getExits: function(id) { 
+					var room = roomdb.get(id);
+					if (room)
+						return room.exits; 
+				},
+				getDist: function() { return 1; }
+			});
+
+			return finder.findPath(roomdb.current().id, target.id);
+		},
+		walkTo: function(path) {
+			if (_.isString(path)) {
+				var origPath = path;
+				path = Api.map.pathTo(path);
+				if (!path)
+					throw new Error('Kein Weg nach ' + origPath + '.');
+			}
+			dothewalk(path);
+		},
+		current: function() {
+			return roomdb.current();
+		},
+		get: function(id) {
+			return roomdb.get(id);
+		}
+	}
+};
+
+function dothewalk(path) {
+	var current = roomdb.current();
+	var cur = path.shift();
+	if (current.id !== cur.room)
+		throw new Error('Invalid room');
+
+	if (path.length === 0) {
+		console.log('Path end.');
+		return;
+	}
+
+	Dispatcher.on('room.changed', function() { _.delay(dothewalk, 400, path); }, true);
+	Dispatcher.fire('global.send', 'cmd', cur.dir);
+}
+
+function notimplemented(name) {
+	return function() {
+		console.log(name + ' is not implemented');
+	};
+}
+
+[
+	'event',
+	'send',
+	'echo',
+	'ticker',
+	'action',
+	'alias',
+	'action',
+	'macro',
+	'substitute',
+	'delay',
+	'gag',
+	'redirect'
+].forEach(function(fn) {
+	if (!Api[fn])
+		Api[fn] = notimplemented(fn);
+});
+
+// aliases
+Api.act = Api.action;
+Api.unact = Api.unaction;
+Api.map.walkto = Api.map.walkTo;
+Api.map.seticon = Api.map.setIcon;
+Api.map.pathto = Api.map.pathTo;
+
+// trigger
+
+// action (search -> command)
+// ticker (execute commands every x seconds)
+// alias
+// macro (key -> command)
+// event (session connect, enter/exit room, )
+// substitute (replace text from mud)
+// delay
+// gag (string) removes any line that contains that string
+
+/*
+Api.on('line', function(line) {
+	Api.write(line);
+});
+*/
+
+module.exports = Api;

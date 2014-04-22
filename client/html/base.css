@@ -1,0 +1,124 @@
+@import url(../bower_components/fontawesome/css/font-awesome.css);
+
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Source Code";
+  src: url("../bower_components/topcoat/font/SourceCodePro-Regular.otf");
+}
+
+@font-face {
+  font-family: "Source Code";
+  src: url("../bower_components/topcoat/font/SourceCodePro-Light.otf");
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: "Source Code";
+  src: url("../bower_components/topcoat/font/SourceCodePro-Semibold.otf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Source Code";
+  src: url("../bower_components/topcoat/font/SourceCodePro-Bold.otf");
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "President";
+  src: url("President.otf");
+  font-weight: 800;
+}
+
+.popup-menu {
+  color: black;
+  position: absolute;
+  left: 0;
+  z-index: 10;
+  border: 1px solid black;
+  background-color: white;
+  margin: 0;
+  background-color: #999;
+  border: 1px solid #aaa;
+}
+
+.popup-menu.up {
+  bottom: 0;
+}
+
+.popup-menu.down {
+  top: 0;
+}
+
+.popup-menu-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-family: "Source Code", "Courier New", Courier, monospace;
+  font-size: 13px;
+  font-weight: 200;
+  line-height: 19px;
+}
+
+.popup-menu-item a {
+  text-decoration: none;
+}
+
+.popup-menu-item:hover {
+  background-color: #ccc;
+}
+
+.popup-menu-item {
+  white-space: nowrap;
+  padding: 3px 4px;
+}
+
+.mxp-menu {
+    line-height: inherit;
+    position: relative;
+    color: #777;
+}
+
+a.mxp-send {
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* text styles */
+
+.bold { font-weight: 600; }
+.dim { opacity: 0.6;}
+.italic { font-style: italic; }
+.underline { text-decoration: underline; }
+.blink {
+    animation: blink 1s step-end infinite;
+    -webkit-animation: blink 1s step-end infinite;
+}
+.fastblink {
+    animation: blink 0.4s step-end infinite;
+    -webkit-animation: blink 0.4s step-end infinite;
+}
+@keyframes blink {
+    0% { visibility: hidden; }
+    50% { visibility: visible; }
+}
+@-webkit-keyframes blink {
+    0% { visibility: hidden; }
+    50% { visibility: visible; }
+}
+.inverted { background-color: #ccc; color: black;}
+.hidden { display: none; }
+.strikethrough { text-decoration: line-through; }
+.doubleunderline {
+    text-decoration: underline;
+    border-bottom: 1px solid #ccc;
+}
+.normal { color: inherit; }
+.framed { border: 1px solid #ccc; }
+.overlined { border-top: 1px solid #ccc; }
