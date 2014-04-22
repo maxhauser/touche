@@ -1,8 +1,5 @@
 var gulp = require('gulp');
-var jshint = require('gulp-jshint');
 var mocha = require('gulp-mocha');
-var rename = require('gulp-rename');
-var gzip = require('gulp-gzip');
 var path = require('path');
 var gutil = require('gulp-util');
 var rimraf = require('gulp-rimraf');
@@ -13,14 +10,8 @@ var CompressionPlugin = require('compression-webpack-plugin');
 
 var argv = require('minimist')(process.argv.slice(2));
 
-var target = './dist';
-var source = './client';
-
-gulp.task('lint', function() {
-    return gulp.src(source + '/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
-});
+var target = path.join(__dirname, 'dist');
+var source = path.join(__dirname, 'client');
 
 gulp.task('copy', ['clean'], function() {
     return gulp.src(source + '/html/userform.html')
@@ -55,7 +46,7 @@ gulp.task('webpack', ['clean'], function(cb) {
             main: source + '/src/main.js'
         },
         output: {
-            path: path.join(__dirname, 'dist'),
+            path: target,
             publicPath: '',
             filename: 'app.[hash].js',
             chunkFilename: '[chunkhash].js'
@@ -88,12 +79,12 @@ gulp.task('webpack', ['clean'], function(cb) {
                 loader: 'file'
             }, {
                 test: /\.js$/,
-                include: /htel\/client\/src\/.+\.js$/,
-                loader: 'jsxharmony'
+                include: /client\/src\/.+\.js$/,
+                loader: 'jsx'
             }],
             postLoaders: [{
                 test: /\.js/,
-                include: /htel\/client\/src\/.+\.js$/,
+                include: /client\/src\/.+\.js$/,
                 loader: 'jshint'
             }]
         }
@@ -110,9 +101,15 @@ gulp.task('webpack', ['clean'], function(cb) {
 
     webpack(config, function(err, stats) {
         if (err) throw new gutil.PluginError("webpack", err);
+
         gutil.log("[webpack]", stats.toString({
             colors: true
         }));
+
+        var errors = stats.compilation.errors;
+        if (!argv.debug && errors && errors.length)
+            throw new gutil.PluginError("webpack", errors[0].message);
+        
         cb();
     });
 });

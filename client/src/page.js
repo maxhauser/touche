@@ -152,7 +152,7 @@ var Page = React.createClass({
         AppDispatcher.on('global.connect', this.connect);
         AppDispatcher.on('global.disconnect', this.disconnect);
 
-        this.state.config.plugins.forEach(plugin => Registry.require('plugins.' + plugin));
+        this.state.config.plugins.forEach(function(plugin) { Registry.require('plugins.' + plugin); });
     },
     componentWillUnmount: function() {
         AppDispatcher.off('global.sendUsername', this.sendUsername);

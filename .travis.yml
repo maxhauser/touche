@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - 1.2
+
+before_install:
+  - npm_config_tmp=.npm/tmp npm install bower@1.3.2 -g
+
+install:
+  - go get github.com/yvasiyarov/gorelic
+  - bower install
+  - npm_config_tmp=.npm/tmp npm install

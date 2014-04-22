@@ -108,7 +108,7 @@ var Mapper = React.createClass({
 
 		var push = Array.prototype.push;
 
-		var addroom = (room, c) => {
+		var addroom = function(room, c) {
 			if (rooms[room.id])
 				return;
 

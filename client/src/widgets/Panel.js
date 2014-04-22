@@ -12,7 +12,7 @@ var Panel = React.createClass({
         if (this.props.direction === 'horizontal') {
             els = <div className="ct-row">{children}</div>;
         } else {
-            els = children.map(child => <div key={child.props.key} className="ct-row">{child}</div>);
+            els = children.map(function(child) {return <div key={child.props.key} className="ct-row">{child}</div>; });
         }
 
         var ct = this.transferPropsTo(<div className={"container " + this.props.direction}>{els}</div>);

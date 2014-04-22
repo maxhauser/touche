@@ -23,10 +23,10 @@ function getText(line) {
 var Api;
 
 var mych = env.linePipeline.add();
-mych.receive(line => {
+mych.receive(function(line) {
 	var text = getText(line);
 
-	if (_.any(gags, gag => gag.test(text))) {
+	if (_.any(gags, function(gag) { return gag.test(text); })) {
 		console.log('GAGGED', text);
 		return;
 	}

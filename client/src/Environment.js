@@ -13,7 +13,7 @@ var env = {
 	fire: Dispatcher.fire.bind(Dispatcher)
 };
 
-env.tokenPipeline.receive(ast => Dispatcher.fire('global.ast', ast));
+env.tokenPipeline.receive(function(ast) { Dispatcher.fire('global.ast', ast); });
 
 var currentLine = [];
 var patchTimeout = null;
@@ -45,7 +45,7 @@ env.linePipeline.receive(function(line) {
 	});
 });
 
-env.commandPipeline.receive(cmd => Dispatcher.fire('global.send', cmd.type, cmd.value));
+env.commandPipeline.receive(function(cmd) { Dispatcher.fire('global.send', cmd.type, cmd.value); });
 
 var inch = env.commandPipeline.add();
 inch.receive(function(cmd) {
@@ -65,7 +65,7 @@ inch.receive(function(cmd) {
 	if (cmd.value.length === 0 || /^\s*\W/.test(cmd.value))
 		return inch.send(cmd);
 
-	cmd.value.split(env.splitChar).forEach(val => inch.send({type: 'cmd', value: val}));
+	cmd.value.split(env.splitChar).forEach(function(val) { inch.send({type: 'cmd', value: val}); });
 });
 
 module.exports = env;

@@ -39,7 +39,7 @@ var PopupMenu = React.createClass({
 		this.props.onClick();
 	},
 	render: function() {
-		var renderItem = item => <PopupMenuItem item={item} onClick={this.props.onClick}/>;
+		var renderItem = function(item) { return <PopupMenuItem item={item} onClick={this.props.onClick}/>; }.bind(this);
 		return <div className={"popup-menu " + (this.props.up?"up":"down")} onMouseLeave={this.onLeave}><ul className="popup-menu-list">{this.props.items.map(renderItem)}</ul></div>;
 	}
 });
@@ -341,10 +341,10 @@ var Content = React.createClass({
 						var parser = new MxpParser();
 						options = mxp.attribsToObject(ast.attribs);
 						var text = def.def;
-						_.each(options, (value, name) => {
+						_.each(options, function(value, name) {
 							text = text.replace('&' + name + ';', "'" + value + "'");
 						});
-						parser.onEmit = ast => this.emit(ast);
+						parser.onEmit = function(ast) { this.emit(ast); }.bind(this);
 						this.openTag(name);
 						parser.feed(text);
 					} else {
