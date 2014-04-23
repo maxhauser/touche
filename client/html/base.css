@@ -80,11 +80,16 @@
 
 .mxp-menu {
     line-height: inherit;
-    position: relative;
     color: #777;
+
+    position: absolute;
+    right: -0.5rem;
+    font-size: 0.8rem;
+    top: -0.4rem; 
 }
 
 a.mxp-send {
+    position: relative;
     text-decoration: underline;
     cursor: pointer;
     display: inline-block;

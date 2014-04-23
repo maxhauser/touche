@@ -119,7 +119,7 @@ var Mapper = React.createClass({
 				return { coords: c, sourceid: room.id, targetid: id, dir: dir};
 			}));
 			els.unshift(this.renderRoom(room, c));
-		};
+		}.bind(this);
 
 		addroom(room, [0,0]);
 		while(queue.length !== 0) {

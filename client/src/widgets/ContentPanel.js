@@ -117,7 +117,7 @@ var Content = React.createClass({
 						AppDispatcher.fire('global.send', 'cmd', item.command, /^!/.test(item.command));
 					AppDispatcher.fire('global.inputExpected');
 				};
-				var up = (e.target.offsetTop - e.currentTarget.scrollTop) / e.currentTarget.clientHeight > 0.5;
+				var up = (e.target.parentElement.offsetTop - e.currentTarget.scrollTop) / e.currentTarget.clientHeight > 0.5;
 				React.renderComponent(<PopupMenu items={items} onClick={clicked} up={up}/>, menuel);
 				return;
 			}

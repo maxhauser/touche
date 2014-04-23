@@ -42,7 +42,7 @@ var LoginPanel = React.createClass({
                         <small>Benutzername und Passwort sind optional.</small>
                      </div>);
         }
-        return (<Widget caption="Verbindung" className={this.state.state}>
+        return (<Widget caption="Verbindung" className={"login-widget " + this.state.state}>
             {title}
             <form action="index.html" method="POST" onSubmit={this.click} autoComplete="on">
                 {(this.state.state !== 'connected' || !env.lightUI)?[

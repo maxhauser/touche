@@ -184,6 +184,9 @@ func openWriter(w http.ResponseWriter, r *http.Request) (net.Conn, writerFlusher
 	sseWriter.WriteString("Content-Type: text/event-stream\r\n\r\n")
 	sseWriter.Flush()
 
+	var heartbeat = strconv.FormatInt(time.Duration(PingInterval*2).Nanoseconds()/1000000, 10)
+	writer.Write([]byte("heartbeatTimeout: " + heartbeat + "\r\n"))
+
 	return sseConn, writer, nil
 }
 

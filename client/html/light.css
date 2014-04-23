@@ -11,6 +11,13 @@ hr {
     border-top: 1px solid black;
 }
 
+.login-widget .widget-body
+{
+    border: 2px solid #888;
+    padding: 1.5rem 1rem 1rem 1rem;
+    background-color: #f4f4f4;
+}
+
 .avalon-text {
     font-family: President;
     font-size: 32pt;

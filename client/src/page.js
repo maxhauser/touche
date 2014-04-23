@@ -109,7 +109,7 @@ var Page = React.createClass({
         });
 
         source.addEventListener('error', function(err) {
-            console.log('EventSource error:', err);
+            //console.log('EventSource error:', err);
             source.close();
             AppDispatcher.fire('global.disconnected');
         }.bind(this), false);
