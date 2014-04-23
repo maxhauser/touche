@@ -21,7 +21,7 @@ Registry.define('plugins.scripting', function() {
 });
 
 Registry.define('plugins.automapper', function() {
-	require('./plugins/automapper');
+	require('./plugins/Automapper');
 });
 
 var cns = [{
