@@ -45,14 +45,11 @@ var PopupMenu = React.createClass({
 });
 
 var Content = React.createClass({
-	shouldComponentUpdate: function() {
-		return false;
-	},
 	render: function() {
 		return this.transferPropsTo(<div className="content-wrap">
 			<div className="content-scroll">
 				<div className="content-overlay"/>
-				<div ref="content" className="content" onClick={this.onClick}/>
+				<div ref="content" aria-role="log" aria-live="polite" aria-busy={this.state.afterinput?"true":"false"} className="content" onClick={this.onClick}/>
 			</div>
 		</div>);
 	},
@@ -159,24 +156,47 @@ var Content = React.createClass({
 		var el = this.getRenderNode();
 		el.classList[value == 1?'add':'remove']('fight');
 	},
+	onSend: function() {
+		this.scrollToBottom();
+		this.setState({afterinput: true});
+	},
 	componentDidMount: function() {
 		AppDispatcher.on('global.ast', this.emit);
 		AppDispatcher.on('global.atcp', this.onAtcp);
         AppDispatcher.on('global.connected', this.forceSendSize);
-        AppDispatcher.on('global.send', this.scrollToBottom);
+        AppDispatcher.on('global.send', this.onSend);
         window.addEventListener('resize', this.sendSize);
 	},
 	componentWillUnmount: function() {
 		AppDispatcher.off('global.ast', this.emit);
 		AppDispatcher.off('global.atcp', this.onAtcp);
         AppDispatcher.off('global.connected', this.forceSendSize);
-        AppDispatcher.off('global.send', this.scrollToBottom);
+        AppDispatcher.off('global.send', this.onSend);
         window.removeEventListener('resize', this.sendSize);
+	},
+	invertColors: function() {
+		var styles = this.getStyles();
+		fg = styles.color;
+		bg = styles.backgroundColor;
+		if (fg) {
+			styles.backgroundColor = fg;
+			if (bg) {
+				styles.color = bg;
+				styles.borderColor = bg;
+			} else {
+				delete styles.color;
+				delete styles.borderColor;
+			}
+		} else if (bg) {
+			styles.color = bg;
+			styles.borderColor = bg;
+			delete styles.backgroundColor;
+		}
 	},
 	emit: function(ast) {
 		if (ast.type === 'flush')
 			return this.batchComplete();
-		
+
 		var a, el, name, options;
 		switch (ast.type) {
 			case 'text':
@@ -198,6 +218,7 @@ var Content = React.createClass({
 				break;
 
 			case 'newline':
+				delete this.getStyles().marginLeft;
 				this.newLine();
 				if (this.state.line) {
 					AppDispatcher.fire('global.textline', this.state.line);
@@ -213,14 +234,23 @@ var Content = React.createClass({
 
 			case 'set-style':
 				this.getClasses().push(ast.style);
+				if (ast.style === 'inverted')
+					this.invertColors();
 				break;
 
 			case 'clear-style':
 				this.setClasses(_.difference(this.getClasses(), ast.style));
+				if (ast.style.indexOf('inverted') !== -1)
+					this.invertColors();
+				break;
+
+			case 'leftshift-escape':
+				this.getStyles().marginLeft = -(ast.parts[0] * this.state.charWidth) + 'px';
 				break;
 
 			case 'reset-color':
 				delete this.getStyles().color;
+				delete this.getStyles().borderColor;
 				break;
 
 			case 'reset-background-color':
@@ -229,6 +259,7 @@ var Content = React.createClass({
 
 			case 'set-color':
 				this.getStyles().color = ast.color;
+				this.getStyles().borderColor = ast.color;
 				break;
 
 			case 'set-background-color':
@@ -468,6 +499,7 @@ var Content = React.createClass({
 	},
 	batchComplete: function() {
 		var frag = this.fragel;
+		this.setState({afterinput: false});
 		if (frag) {
 			var atbottom = this.atBottom();
 			this.getRenderNode().appendChild(frag);

@@ -46,7 +46,6 @@ hr {
 }
 
 .widget input {
-    margin-bottom: 10px;
     width: 100%;
     min-height: 1.68rem;
 }
@@ -88,7 +87,6 @@ a, a:visited, a:link, a:active {
     font-weight: 200;
     line-height: 19px;
 
-    color: #c6c8c8;
     letter-spacing: 0;
 }
 
@@ -110,10 +108,19 @@ a, a:visited, a:link, a:active {
     bottom: 0;
     overflow: auto;
 
+    color: #c6c8c8;
+    border-color: #c6c8c8;
+
     padding: 5px;
     min-width: 200px;
     min-height: 200px;
 }
+
+.content span {
+    background-color: #222;
+}
+
+span.inverted { background-color: #c6c8c8 ; color: #222; }
 
 .content.fight {
     animation: fight 1s step-end infinite;

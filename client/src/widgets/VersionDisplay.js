@@ -4,7 +4,7 @@ var React = require('react');
 var VersionDisplay = React.createClass({
     render: function() {
         return (<p className="widget version">
-            <span>Bitte hilf mit und melde Fehler oder Ideen <a target="_blank" href="https://github.com/maxhauser/touche/issues/new">hier</a>. Danke!</span>
+            <a target="_blank" title="Fehler oder Idee melden" href="https://github.com/maxhauser/touche/issues/new">Bitte hilf mit und melde Fehler oder Ideen hier.</a><span> Danke!</span>
         </p>);
     }
 });

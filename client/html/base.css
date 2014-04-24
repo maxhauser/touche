@@ -35,6 +35,10 @@
   font-weight: 800;
 }
 
+.connection-form {
+  line-height: 2.5rem;
+}
+
 .popup-menu {
   color: black;
   position: absolute;
@@ -118,12 +122,13 @@ a.mxp-send {
     50% { visibility: visible; }
 }
 .inverted { background-color: #ccc; color: black;}
-.hidden { display: none; }
+.conceal { visibility: hidden; }
 .strikethrough { text-decoration: line-through; }
 .doubleunderline {
     text-decoration: underline;
-    border-bottom: 1px solid #ccc;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
 }
 .normal { color: inherit; }
-.framed { border: 1px solid #ccc; }
-.overlined { border-top: 1px solid #ccc; }
+.framed { border-width: 1px; border-style: solid; }
+.overlined { border-top-width: 1px; border-top-style: solid; }

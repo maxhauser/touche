@@ -33,6 +33,7 @@ var cns = [
 		width: '740px',
 		height: '100%'
 	},
+	'aria-role': 'main',
 	children: [{
 		widget: 'ContentPanel',
 		mainContent: true,

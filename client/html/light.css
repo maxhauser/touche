@@ -11,10 +11,10 @@ hr {
     border-top: 1px solid black;
 }
 
-.login-widget .widget-body
+.login-widget.disconnected .widget-body
 {
     border: 2px solid #888;
-    padding: 1.5rem 1rem 1rem 1rem;
+    padding: 1rem;
     background-color: #f4f4f4;
 }
 
@@ -22,10 +22,8 @@ hr {
     font-family: President;
     font-size: 32pt;
     font-weight: bold;
-}
-
-.connection-title h3 {
     margin: 0;
+    line-height: 1.2em;
 }
 
 .connection-title small {
@@ -37,7 +35,7 @@ hr {
 }
 
 .disconnected .content {
-    opacity: 0.4;
+    opacity: 0.25;
 }
 
 .container {
@@ -119,7 +117,6 @@ hr {
 }
 
 .widget input {
-    margin-bottom: 10px;
     width: 100%;
     min-height: 1.68rem;
 }
@@ -165,7 +162,6 @@ a, a:visited, a:link, a:active {
     background: none;
     border: none;
     box-shadow: none;
-    color: black;
 
     display: table-cell;
     width: 100%;
@@ -202,12 +198,21 @@ a, a:visited, a:link, a:active {
     bottom: 0;
     overflow: auto;
 
+    color: black;
+    border-color: black;
+
     padding: 5px;
     min-width: 200px;
     min-height: 200px;
 
     padding-top: 20px;
 }
+
+.content span {
+    background-color: white;
+}
+
+span.inverted { background-color: black; color: white; }
 
 .content.fight {
     animation: fight 1s step-end infinite;

@@ -38,20 +38,20 @@ var LoginPanel = React.createClass({
         var title;
         if (this.state.state !== 'connected') {
             title = (<div className="connection-title">
-                        <span className="avalon-text">Avalon</span><br/>
+                        <h3 className="avalon-text">Avalon</h3>
                         <small>Benutzername und Passwort sind optional.</small>
                      </div>);
         }
         return (<Widget caption="Verbindung" className={"login-widget " + this.state.state}>
             {title}
-            <form action="index.html" method="POST" onSubmit={this.click} autoComplete="on">
+            <form action="index.html" className="connection-form" method="POST" onSubmit={this.click} autoComplete="on">
                 {(this.state.state !== 'connected' || !env.lightUI)?[
-                <input key="u" name="username" ref="user" type="text" className="topcoat-text-input--large" placeholder="Benutzername"/>,<br key="b1"/>,
-                <input key="p" name="pwd" ref="pwd" type="password" className="topcoat-text-input--large" placeholder="Passwort"/>,<br key="b2"/>
+                <input key="u" name="username" title="Benutzername" ref="user" type="text" className="topcoat-text-input--large" placeholder="Benutzername"/>,<br key="b1"/>,
+                <input key="p" name="pwd" title="Passwort" ref="pwd" type="password" className="topcoat-text-input--large" placeholder="Passwort"/>,<br key="b2"/>
                 ]:[]}
                 <input key={this.state.state}
                     type="submit" className={"topcoat-button--large" + (this.state.state === 'connected'?"":"--cta")}
-                        onClick={this.click} value={this.state.state === 'connected'?"Trennen":"Verbinden"}/><br/>
+                        onClick={this.click} value={this.state.state === 'connected'?"Trennen":"Verbinden"}/>
             </form>
             </Widget>);
     }

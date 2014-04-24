@@ -109,10 +109,10 @@ var CommandInput = React.createClass({
     render: function() {
         var suggestion = this.currentCandidate();
         return (
-            <div className={"topcoat-text-input--large command-input-wrapper " + ((this.state.compose || this.state.scriptCompose)?'compose':'')} onClick={this.onWrapperClick}>
-                <div className="command-input">
-                    <span ref="input" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true} onKeyDown={this.keydown} onKeyPress={this.keypress} onKeyUp={this.keyup}/>
-                    <span className={'input-suggestions' + (suggestion?'':' hidden')}>{suggestion}</span>
+            <div title="Kommandoeingabe" className={"topcoat-text-input--large command-input-wrapper " + ((this.state.compose || this.state.scriptCompose)?'compose':'')} onClick={this.onWrapperClick}>
+                <div className="command-input" title="Kommandoeingabe" aria-role="textbox" aria-autocompletion="inline">
+                    <span ref="input" aria-live="assertive" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true} onKeyDown={this.keydown} onKeyPress={this.keypress} onKeyUp={this.keyup}/>
+                    <span aria-role="presentation" className={'input-suggestions' + (suggestion?'':' hidden')}>{suggestion}</span>
                 </div>
                 <div className="command-compose-actions">
                     <div onClick={this.onEditorCancel} className="topcoat-button--large" >Abbrechen</div>

@@ -2,13 +2,14 @@ var AstTransformation = require('./asttransformation');
 var componse = require('./compose');
 var color256 = require('./colors');
 
-var styles = [undefined, 'bold', 'dim', 'italic', 'underline', 'blink', 'fastblink', 'inverted', 'hidden', 'strikethrough'];
+var styles = [undefined, 'bold', 'dim', 'italic', 'underline', 'blink', 'fastblink', 'inverted', 'conceal', 'strikethrough'];
 styles[21] = 'doubleunderline';
 styles[22] = {clear:['bold']};
 styles[23] = {clear:['italic']};
 styles[24] = {clear:['underline', 'doubleunderline']};
 styles[25] = {clear:['blink','fastblink']};
 styles[27] = {clear:['inverted']};
+styles[28] = {clear:['conceal']};
 styles[29] = {clear:['strikethrough']};
 styles[50] = 'framed';
 styles[52] = 'overlined';
@@ -46,11 +47,12 @@ function modeTransformation(ast, next) {
                 });
 
             var style = styles[val];
-            if (style)
+            if (style) {
                 return next({
                     type: style.clear?'clear-style':'set-style',
                     style: style.clear||style
                 });
+            }
 
             return next(ast);
 

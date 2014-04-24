@@ -268,6 +268,14 @@ module.exports = function() {
                 this.consume();
                 parts.push(parseInt(curr, 10));
                 curr = '';
+            } else if (ll1 === 'D') {
+                parts.push(parseInt(curr, 10));
+                this.consume();
+                this.onEmit({
+                    type: 'leftshift-escape',
+                    parts: parts
+                });
+                return true;
             } else if (ll1 === 'm') {
                 parts.push(parseInt(curr, 10));
                 this.consume();
