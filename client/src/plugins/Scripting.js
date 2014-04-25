@@ -1,3 +1,4 @@
+/*global CoffeeScript:false, unescape:false*/
 
 var env = require('../Environment');
 env.scriptMarker = env.scriptMarker || '$';
@@ -17,7 +18,7 @@ if ((typeof btoa !== "undefined" && btoa !== null) && (typeof JSON !== "undefine
     };
 }
 
-evalix = 1;
+var evalix = 1;
 function evalCoffee(code, context) {
     /* jshint ignore:start */
     var src = compile(code, {bare: true, sourceFiles: ['eval ' + evalix++], shiftLine: true});

@@ -361,7 +361,7 @@ module.exports = function() {
 
         var title = '';
         while (true) {
-            c = this.ll1();
+            var c = this.ll1();
             if (c === EOF)
                 return false;
             this.consume();

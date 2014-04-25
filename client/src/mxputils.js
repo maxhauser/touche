@@ -34,7 +34,7 @@ function parseAttributeList(text) {
         var start = i,
             end;
         if (text[i] === '"' || text[i] === "'") {
-            quote = text[i];
+            var quote = text[i];
             start++;
             i++;
             while (text[i] !== quote && text[i] !== undefined)

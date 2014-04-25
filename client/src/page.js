@@ -1,4 +1,5 @@
 /**@jsx React.DOM*/
+/*global EventSource:false*/
 var React = require('react');
 var _ = require('lodash');
 

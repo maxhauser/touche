@@ -100,38 +100,38 @@ var Content = React.createClass({
 		if (target) {
 			e.preventDefault();
 			var options = target['data-options'];
-			if (e.target.classList.contains('mxp-menu')) {
-				var menuel = e.target;
-				var hints = (options.hint||'').split('|');
-				var cmds = options[0].split('|');
-				var items = [];
-				for (var i=0,l=cmds.length;i<l;i++) {
-					items.push({caption: hints[i+1], command: cmds[i]});
-				}
-				var clicked = function(item) {
-					React.unmountComponentAtNode(menuel);
-					if (item)
-						AppDispatcher.fire('global.send', 'cmd', item.command, /^!/.test(item.command));
-					AppDispatcher.fire('global.inputExpected');
-				};
-				var up = (e.target.parentElement.offsetTop - e.currentTarget.scrollTop) / e.currentTarget.clientHeight > 0.5;
-				React.renderComponent(<PopupMenu items={items} onClick={clicked} up={up}/>, menuel);
-				return;
-			}
-			this.handleMxpSend(options);
-			AppDispatcher.fire('global.inputExpected');
+			this.handleMxpSend(options, e, target);
 		} else {
 			e.stopPropagation();
 			AppDispatcher.fire('global.inputExpected');
 		}
 	},
-	handleMxpSend: function(options) {
+	handleMxpSend: function(options, e, target) {
 		var cmd = options[0] || '';
 		var pos = cmd.indexOf('|');
-		if (pos !== -1)
-			cmd = cmd.substr(0, pos);
-		AppDispatcher.fire('global.send', 'cmd', cmd, /^!/.test(cmd));
-		/**/
+		if (pos === -1) {
+			AppDispatcher.fire('global.send', 'cmd', cmd, /^!/.test(cmd)); //
+			AppDispatcher.fire('global.inputExpected');
+			return;
+		}
+
+		var hints = (options.hint||'').split('|');
+		var cmds = options[0].split('|');
+		var items = [];
+		for (var i=0,l=cmds.length;i<l;i++) {
+			items.push({caption: hints[i+1], command: cmds[i]});
+		}
+		var menuel = document.createElement('span');
+		var clicked = function(item) {
+			React.unmountComponentAtNode(menuel);
+			menuel.parentElement.removeChild(menuel);
+			if (item)
+				AppDispatcher.fire('global.send', 'cmd', item.command, /^!/.test(item.command)); //
+			AppDispatcher.fire('global.inputExpected');
+		};
+		var up = (target.offsetTop - e.currentTarget.scrollTop) / e.currentTarget.clientHeight > 0.5;
+		target.appendChild(menuel);
+		React.renderComponent(<PopupMenu items={items} onClick={clicked} up={up}/>, menuel);
 	},
 	getDefaultProps: function() {
 		return {
@@ -176,8 +176,8 @@ var Content = React.createClass({
 	},
 	invertColors: function() {
 		var styles = this.getStyles();
-		fg = styles.color;
-		bg = styles.backgroundColor;
+		var fg = styles.color;
+		var bg = styles.backgroundColor;
 		if (fg) {
 			styles.backgroundColor = fg;
 			if (bg) {
@@ -197,7 +197,7 @@ var Content = React.createClass({
 		if (ast.type === 'flush')
 			return this.batchComplete();
 
-		var a, el, name, options;
+		var name;
 		switch (ast.type) {
 			case 'text':
 				if ((ast.text === kletterfail || ast.text === schwimmfail) && CurrentExits.lastmove) {
@@ -246,6 +246,7 @@ var Content = React.createClass({
 
 			case 'leftshift-escape':
 				this.getStyles().marginLeft = -(ast.parts[0] * this.state.charWidth) + 'px';
+				this.getClasses().push('solidBackground');
 				break;
 
 			case 'reset-color':
@@ -294,94 +295,7 @@ var Content = React.createClass({
 				break;
 
 			case 'mxp-open-element':
-				name = ast.name.toLowerCase();
-
-				if (name === 'exit') {
-					a = mxp.attribsToObject(ast.attribs);
-					if (a.exithint && a.exitdir) {
-						CurrentExits.exits[a.exithint] = a.exitdir;
-					}
-				}
-
-				if (name === 'support') {
-					AppDispatcher.fire('global.send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR>', true);
-				} else if (name === 'version') {
-					AppDispatcher.fire('global.send', 'cmd', '\x1b[1z<VERSION MXP=1.2>', true);
-				} else if (name === 'a') {
-					el = document.createElement('a');
-					a = mxp.attribsToObject(ast.attribs);
-					el.target = '_blank';
-					el.href = a.href;
-					this.openTag(name, el);
-				} else if (name === 'color' || name === 'c') {
-					a = mxp.attribsToObject(ast.attribs);
-					this.openTag(name);
-					if (a.fore || a[0])
-						this.getStyles().color = a.fore || a[0];
-					if (a.back)
-						this.getStyles().backgroundColor = a.back;
-				} else if (name === 'b' || name === 'bold' || name === 'strong') {
-					this.openTag(name);
-					this.getStyles().fontWeight = 'bold';
-				} else if (name === 'i' || name === 'italic' || name === 'em')  {
-					this.openTag(name);
-					this.getStyles().fontStyle = 'italic';
-				} else if (name === 'u' || name === 'underline')  {
-					this.openTag(name);
-					this.getStyles().textDecoration = 'underline';
-				} else if (name === 'br') {
-					this.newLine();
-				} else if (name === 'hr') {
-					el = document.createElement('hr');
-					this.openTag(name, el, true);
-				} else if (name === 'username') {
-					AppDispatcher.fire('global.sendUsername');
-				} else if (name === 'password') {
-					AppDispatcher.fire('global.sendPassword');
-				} else if (name === 'expire') {
-					if (ast.attribs[0] === 'ROOM') {
-						_.keys(CurrentExits.exits).forEach(function(key) {
-							delete CurrentExits.exits[key];
-						});
-						delete CurrentExits.lastmove;
-					}
-				} else if (name === 'send') {
-					el = document.createElement('a');
-					options = mxp.attribsToObject(ast.attribs);
-					if (options[0] && options[0].indexOf('|') !== -1) {
-						var ch = document.createElement('i');
-						ch.className = 'mxp-menu fa fa-info-circle pull-right';
-						el.appendChild(ch);
-					}
-					el.className = 'mxp-send';
-					el['data-options'] = options;
-					if (options.hint)
-						el.title = options.hint.replace(/\|.*/,'');
-					this.openTag(name, el);
-				} else if (name === 'font') {
-					this.openTag(name);
-					options = mxp.attribsToObject(ast.attribs);
-					var styles = this.getStyles();
-					if (options.face)
-						styles.fontFamily = options.face;
-					if (options.size)
-						styles.fontSize = options.size + 'pt';
-				} else {
-					var def = this.state.mxpDefs.element[name];
-					if (def) {
-						var parser = new MxpParser();
-						options = mxp.attribsToObject(ast.attribs);
-						var text = def.def;
-						_.each(options, function(value, name) {
-							text = text.replace('&' + name + ';', "'" + value + "'");
-						});
-						parser.onEmit = function(ast) { this.emit(ast); }.bind(this);
-						this.openTag(name);
-						parser.feed(text);
-					} else {
-						console.log('unknown mxp tag', ast);
-					}
-				}
+				this.handleMxpOpenElement(ast);
 				break;
 
 			case 'mxp-close-element':
@@ -389,6 +303,98 @@ var Content = React.createClass({
 				//this.emitText('</' + name + '>');
 				this.closeTag(name);
 				break;
+		}
+	},
+	handleMxpOpenElement: function(ast) {
+		var a, el, options;
+		var name = ast.name.toLowerCase();
+
+		if (name === 'exit') {
+			a = mxp.attribsToObject(ast.attribs);
+			if (a.exithint && a.exitdir) {
+				CurrentExits.exits[a.exithint] = a.exitdir;
+			}
+		}
+
+		if (name === 'support') {
+			AppDispatcher.fire('global.send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR>', true);
+		} else if (name === 'version') {
+			AppDispatcher.fire('global.send', 'cmd', '\x1b[1z<VERSION MXP=1.2>', true);
+		} else if (name === 'a') {
+			el = document.createElement('a');
+			a = mxp.attribsToObject(ast.attribs);
+			el.target = '_blank';
+			el.href = a.href;
+			this.openTag(name, el);
+		} else if (name === 'color' || name === 'c') {
+			a = mxp.attribsToObject(ast.attribs);
+			this.openTag(name);
+			if (a.fore || a[0])
+				this.getStyles().color = a.fore || a[0];
+			if (a.back)
+				this.getStyles().backgroundColor = a.back;
+		} else if (name === 'b' || name === 'bold' || name === 'strong') {
+			this.openTag(name);
+			this.getStyles().fontWeight = 'bold';
+		} else if (name === 'i' || name === 'italic' || name === 'em')  {
+			this.openTag(name);
+			this.getStyles().fontStyle = 'italic';
+		} else if (name === 'u' || name === 'underline')  {
+			this.openTag(name);
+			this.getStyles().textDecoration = 'underline';
+		} else if (name === 'br') {
+			this.newLine();
+		} else if (name === 'hr') {
+			el = document.createElement('hr');
+			this.openTag(name, el, true);
+		} else if (name === 'username') {
+			AppDispatcher.fire('global.sendUsername');
+		} else if (name === 'password') {
+			AppDispatcher.fire('global.sendPassword');
+		} else if (name === 'expire') {
+			if (ast.attribs[0] === 'ROOM') {
+				_.keys(CurrentExits.exits).forEach(function(key) {
+					delete CurrentExits.exits[key];
+				});
+				delete CurrentExits.lastmove;
+			}
+		} else if (name === 'send') {
+			el = document.createElement('a');
+			options = mxp.attribsToObject(ast.attribs);
+			var hasList = options[0] && options[0].indexOf('|') !== -1;
+			el.className = 'mxp-send' + (hasList?' mxp-send-menu':'');
+			el['data-options'] = options;
+			if (hasList) {
+				var iconel = document.createElement('i');
+				iconel.className = 'fa fa-plus mxp-menu-icon';
+				el.appendChild(iconel);
+				el.title = "Klicken um Kommandos anzuzeigen.";
+			} else if (options.hint)
+				el.title = options.hint.replace(/\|.*/,'');
+			this.openTag(name, el);
+		} else if (name === 'font') {
+			this.openTag(name);
+			options = mxp.attribsToObject(ast.attribs);
+			var styles = this.getStyles();
+			if (options.face)
+				styles.fontFamily = options.face;
+			if (options.size)
+				styles.fontSize = options.size + 'pt';
+		} else {
+			var def = this.state.mxpDefs.element[name];
+			if (def) {
+				var parser = new MxpParser();
+				options = mxp.attribsToObject(ast.attribs);
+				var text = def.def;
+				_.each(options, function(value, name) {
+					text = text.replace('&' + name + ';', "'" + value + "'");
+				});
+				parser.onEmit = function(ast) { this.emit(ast); }.bind(this);
+				this.openTag(name);
+				parser.feed(text);
+			} else {
+				console.log('unknown mxp tag', ast);
+			}
 		}
 	},
 	addMxpElementDefinition: function(ast) {

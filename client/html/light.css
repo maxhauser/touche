@@ -208,11 +208,11 @@ a, a:visited, a:link, a:active {
     padding-top: 20px;
 }
 
-.content span {
+.solidBackground {
     background-color: white;
 }
 
-span.inverted { background-color: black; color: white; }
+.inverted { background-color: black; color: white; }
 
 .content.fight {
     animation: fight 1s step-end infinite;

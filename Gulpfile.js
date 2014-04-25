@@ -85,8 +85,16 @@ gulp.task('webpack', ['clean'], function(cb) {
             postLoaders: [{
                 test: /\.js/,
                 include: /client\/src\/.+\.js$/,
-                loader: 'jshint'
+                loader: 'jshint',
             }]
+        },
+        jshint: {
+            "globals": {
+                "console": false,
+                "DEBUG": false
+            },
+            "browser": true,
+            "undef": true
         }
     };
 

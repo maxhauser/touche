@@ -90,7 +90,7 @@ a, a:visited, a:link, a:active {
     letter-spacing: 0;
 }
 
-.mxp-menu {
+.mxp-menu-icon {
     color: #c6c8c8;
 }
 
@@ -116,11 +116,9 @@ a, a:visited, a:link, a:active {
     min-height: 200px;
 }
 
-.content span {
-    background-color: #222;
-}
+.solidBackground { background-color: #222; }
 
-span.inverted { background-color: #c6c8c8 ; color: #222; }
+.inverted { background-color: #c6c8c8 ; color: #222; }
 
 .content.fight {
     animation: fight 1s step-end infinite;

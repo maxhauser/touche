@@ -22,7 +22,7 @@ var StatusBar = React.createClass({
 	}
 }); 
 
-var status = ['tp','ap','sp','mp'];
+var stats = ['tp','ap','sp','mp'];
 var label = {
 	tp: 'Trefferpunkte',
 	ap: 'Aktionspunkte',
@@ -62,7 +62,7 @@ var StatusPanel = React.createClass({
 		var state = this.state;
 		var items = [];
 		if (this.state.isset || !env.lightUI) {
-			_.each(status, function(st) {
+			_.each(stats, function(st) {
 				var s = state[st];
 				var enabled = s && s.max;
 				items.push(<StatusBar key={st} enabled={enabled} curr={s?s.curr:'?'} max={s?s.max:'?'} label={label[st]} direction={this.props.direction}/>);
