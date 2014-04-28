@@ -1,5 +1,6 @@
 var env = require('../Environment');
 var roomdb = require('../roomdb');
+var Api = require('../Api');
 
 var lastroomid;
 var lastdirection;
@@ -15,6 +16,11 @@ var directions = {
 	'r':'r', 'runter':'r',
 	'h':'h', 'hoch':'h'
 };
+var mapper = false;
+
+Api.automap = function(on) {
+	mapper = !!on;
+};
 
 env.on('global.send', function(type, text) {
 	if (type !== 'cmd')
@@ -27,7 +33,8 @@ env.on('room.changed', function() {
 	if (lastdirection && currentId && lastroomid) {
 		var exits = {};
 		exits[lastdirection] = currentId;
-		roomdb.update(lastroomid, {exits: exits});
+		if (mapper)
+			roomdb.update(lastroomid, {exits: exits});
 	}
 	lastroomid = currentId;
 });

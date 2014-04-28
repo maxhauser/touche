@@ -17,6 +17,7 @@
     "fontawesome": "~4.0.3",
     "lodash": "~2.4.1",
     "coffee-script": "~1.7.1",
-    "react": "~0.10.0"
+    "react": "~0.10.0",
+    "alertify.js": "~0.3.11"
   }
 }

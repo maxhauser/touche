@@ -12,6 +12,7 @@ var VersionDisplay = require('./widgets/VersionDisplay');
 var CreaturesPanel = require('./widgets/CreaturesPanel');
 var Mapper = require('./widgets/Mapper');
 var Panel = require('./widgets/Panel');
+var Alertify = require('./alertify');
 
 var env = require('./Environment');
 
@@ -140,8 +141,18 @@ var Page = React.createClass({
             _.delay(this.sendCommand, 150, 'cmd', pwd, true);
         }
     },
+    onBeforeUnload: function() {
+        return "Es besteht eine aufrechte Verbindung zu Avalon.";
+    },
+    onConnected: function() {
+        window.onbeforeunload = this.onBeforeUnload;
+    },
     onDisconnect: function() {
         this.setState({connected: false, eventSource: null, lastSize: {width:0, height:0}});
+        window.onbeforeunload = null;
+    },
+    onError: function(err) {
+        Alertify.error(err.message);
     },
     componentDidMount: function() {
         this.setState({parser: this.createParser()});
@@ -149,9 +160,11 @@ var Page = React.createClass({
         AppDispatcher.on('global.sendPassword', this.sendPassword);
         AppDispatcher.on('global.send', this.sendCommand);
         AppDispatcher.on('global.disconnected', this.onDisconnect);
+        AppDispatcher.on('global.connected', this.onConnected);
 
         AppDispatcher.on('global.connect', this.connect);
         AppDispatcher.on('global.disconnect', this.disconnect);
+        AppDispatcher.on('error', this.onError);
 
         this.state.config.plugins.forEach(function(plugin) { Registry.require('plugins.' + plugin); });
     },
@@ -160,6 +173,8 @@ var Page = React.createClass({
         AppDispatcher.off('global.sendPassword', this.sendPassword);
         AppDispatcher.off('global.send', this.sendCommand);
         AppDispatcher.off('global.disconnected', this.onDisconnect);
+        AppDispatcher.off('global.connected', this.onConnected);
+        AppDispatcher.off('error', this.onError);
 
         AppDispatcher.off('global.connect', this.connect);
         AppDispatcher.off('global.disconnect', this.disconnect);

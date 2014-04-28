@@ -3,6 +3,7 @@ var Dispatcher = require('./AppDispatcher');
 var env = require('./Environment');
 var roomdb = require('./roomdb');
 var Pathfinder = require('./Pathfinder');
+var Alertify = require('./alertify');
 
 var tickers = {};
 var actions = {};
@@ -122,14 +123,12 @@ Api = {
 			Dispatcher.fire('room.changed');
 		},
 		find: function(dest) {
-			var room = roomdb.find(dest);
-			if (room)
-				return roomdb.get(room);
+			return roomdb.find(dest);
 		},
 		pathTo: function(dest) {
 			var target = roomdb.find(dest);
 			if(!target)
-				throw new Error('Cannot find "' + dest + '".');
+				throw new Error('Finde "' + dest + '" nicht.');
 
 			var finder = new Pathfinder({
 				getExits: function(id) { 
@@ -156,6 +155,9 @@ Api = {
 		},
 		get: function(id) {
 			return roomdb.get(id);
+		},
+		remove: function() {
+			roomdb.remove(roomdb.current().id);
 		}
 	}
 };
@@ -163,15 +165,16 @@ Api = {
 function dothewalk(path) {
 	var current = roomdb.current();
 	var cur = path.shift();
-	if (current.id !== cur.room)
-		throw new Error('Invalid room');
+	if (current.id !== cur.room) {
+		Alertify.error('Gehen abgebrochen: falscher Raum.');
+	}
 
 	if (path.length === 0) {
-		console.log('Path end.');
+		Alertify.log('Am Ziel angekommen.');
 		return;
 	}
 
-	Dispatcher.on('room.changed', function() { _.delay(dothewalk, 400, path); }, true);
+	Dispatcher.on('room.changed', function() { _.delay(dothewalk, env.walkSpeed, path); }, true);
 	Dispatcher.fire('global.send', 'cmd', cur.dir);
 }
 
@@ -205,6 +208,10 @@ Api.unact = Api.unaction;
 Api.map.walkto = Api.map.walkTo;
 Api.map.seticon = Api.map.setIcon;
 Api.map.pathto = Api.map.pathTo;
+
+Api.walk = Api.map.walkto;
+Api.find = Api.map.find;
+Api.gehe = Api.map.walkto;
 
 // trigger
 

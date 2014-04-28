@@ -84,7 +84,7 @@ function onAtcp(name, value) {
 
 var RoomDb = {
 	find: function(search) {
-		var re = new RegExp(search);
+		var re = new RegExp(search, 'i');
 
 		var room = _.find(rooms, function(room) {
 			if(re.test(room.site))
@@ -108,6 +108,19 @@ var RoomDb = {
 	},
 	update: function(roomId, data) {
 		updateRoom(roomId, data);
+	},
+	remove: function(roomId) {
+		delete rooms[roomId];
+		_.each(rooms, function(room) {
+			_.each(room.exits, function(exit, key) {
+				if (exit === roomId || exit.room === roomId)
+					delete room.exits[key];
+			});
+		});
+		if (roomId === currentRoomId) {
+			currentRoomId = null;
+			AppDispatcher.fire('room.changed');
+		}
 	}
 };
 

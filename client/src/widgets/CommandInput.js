@@ -109,9 +109,9 @@ var CommandInput = React.createClass({
     render: function() {
         var suggestion = this.currentCandidate();
         return (
-            <div title="Kommandoeingabe" className={"topcoat-text-input--large command-input-wrapper " + ((this.state.compose || this.state.scriptCompose)?'compose':'')} onClick={this.onWrapperClick}>
+            <div title="Kommandoeingabe" className={"topcoat-text-input--large command-input-wrapper " + (this.state.compose?'compose':'')} onClick={this.onWrapperClick}>
                 <div className="command-input" title="Kommandoeingabe" aria-role="textbox" aria-autocompletion="inline">
-                    <span ref="input" aria-live="assertive" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true} onKeyDown={this.keydown} onKeyPress={this.keypress} onKeyUp={this.keyup}/>
+                    <span ref="input" aria-live="assertive" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true} onKeyDown={this.keydown} onKeyPress={this.keypress}/>
                     <span aria-role="presentation" className={'input-suggestions' + (suggestion?'':' hidden')}>{suggestion}</span>
                 </div>
                 <div className="command-compose-actions">
@@ -124,7 +124,7 @@ var CommandInput = React.createClass({
     onEditorCancel: function() {
         if (this.state.compose)
             AppDispatcher.fire('global.send', 'cmd', '*q\nno');
-        this.setState({compose: false, scriptCompose: false});
+        this.setState({compose: false});
         var input = this.refs.input.getDOMNode();
         input.textContent = '';
     },
@@ -137,15 +137,16 @@ var CommandInput = React.createClass({
         } else {
             env.commandPipeline.send({type:'cmd', value: value});
         }
-        this.setState({compose: false, scriptCompose: false});
+        this.setState({compose: false});
         input.textContent = '';
     },
     keypress: function(e) {
-        if (this.state.compose || this.state.scriptCompose)
+        if (this.state.compose)
             return;
 
         if (e.charCode >= 127 && [228, 196, 246, 214, 252, 220, 223].indexOf(e.charCode) === -1)
             return false;
+
         setTimeout(this.updateSuggestion, 0);
     },
     cursorAtEnd: function(value) {
@@ -156,7 +157,7 @@ var CommandInput = React.createClass({
         var input = this.refs.input.getDOMNode();
         var value = input.textContent;
 
-        if (!this.cursorAtEnd(value))
+        if (!this.cursorAtEnd(value) || (value.length > 0 && value[0] === env.scriptMarker))
             return this.clearSuggestion();
 
         value = normalize(value);
@@ -219,19 +220,8 @@ var CommandInput = React.createClass({
             return true;
         }
     },
-    keyup: function(e) {
-        var input = this.refs.input.getDOMNode();
-        var value = input.textContent;
-
-        if (value.length > 0 && value[0] === '$') {
-            this.setState({scriptCompose: true});
-            return;
-        } else if (this.state.scriptCompose) {
-            this.setState({scriptCompose: false});
-        }
-    },
     keydown: function(e) {
-        if (this.state.compose || this.state.scriptCompose)
+        if (this.state.compose)
             return;
 
         var ix;
@@ -247,6 +237,9 @@ var CommandInput = React.createClass({
 
         switch (e.keyCode) {
             case 13: // enter
+                if (e.ctrlKey)
+                    break;
+
                 if (value[0] === '!') {
                     var search = new RegExp('^' + regexEscape(value.substr(1)), "i");
                     var entry = _.find(commandHistory, function(s) { return search.test(s); });
@@ -267,6 +260,9 @@ var CommandInput = React.createClass({
                 }
 
                 this.setState({historyIndex: -1});
+
+                if (value[0] == env.scriptMarker)
+                    return this.clearSuggestion();
 
                 // add all words to the trie
                 var trie = this.getTrie();

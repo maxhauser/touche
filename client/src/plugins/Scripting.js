@@ -1,7 +1,8 @@
 /*global CoffeeScript:false, unescape:false*/
 
 var env = require('../Environment');
-env.scriptMarker = env.scriptMarker || '$';
+env.scriptMarker = env.scriptMarker || '@';
+var Alertify = require('../alertify');
 
 require('script!coffee-script/extras/coffee-script');
 
@@ -22,7 +23,7 @@ var evalix = 1;
 function evalCoffee(code, context) {
     /* jshint ignore:start */
     var src = compile(code, {bare: true, sourceFiles: ['eval ' + evalix++], shiftLine: true});
-    new Function('api', src).call(context, context);
+    return new Function('api', src).call(context, context);
     /* jshint ignore:end */
 }
 
@@ -32,6 +33,18 @@ ch.receive(function(cmd) {
 	if (cmd.type !== 'cmd' || cmd.value.length === 0 || cmd.value[0] !== env.scriptMarker)
 		return ch.send(cmd);
 
-	var script = cmd.value.substr(1);
-	evalCoffee(script, Api);
+    var m = /^@(\w+)/.exec(cmd.value);
+    var skip = 1;
+    if (m) {
+        var f = m[1];
+        if (Api[f]) {
+            skip = 0;
+        }
+    }
+
+	var script = cmd.value.substr(skip);
+	var result = evalCoffee(script, Api);
+    if (result) {
+        Alertify.log(result);
+    }
 });

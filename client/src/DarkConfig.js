@@ -50,7 +50,7 @@ cns.push({
 });
 
 var config = {
-	plugins: [],
+	plugins: ['scripting', 'automapper'],
 	ui: {
 		style: {
 			width: '100%',
@@ -59,9 +59,5 @@ var config = {
 		children: cns
 	}
 };
-
-if (DEBUG) {
-	config.plugins.push('scripting');
-}
 
 module.exports = config;

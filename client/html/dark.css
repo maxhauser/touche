@@ -120,7 +120,7 @@ a, a:visited, a:link, a:active {
 
 .inverted { background-color: #c6c8c8 ; color: #222; }
 
-.content.fight {
+.content-wrap.fight {
     animation: fight 1s step-end infinite;
     -webkit-animation: fight 1s step-end infinite;
 }

@@ -10,9 +10,13 @@ Channel.prototype.send = function(data) {
 		this.buffer.push(data);
 	} else {
 		var receiver = this.receivers.shift();
-		var remove = receiver(data);
-		if (!remove)
-			this.receivers.push(receiver);
+		var remove;
+		try {
+			remove = receiver(data);
+		} finally {
+			if (!remove)
+				this.receivers.push(receiver);
+		}
 	}
 };
 

@@ -153,7 +153,7 @@ var Content = React.createClass({
 		if (name !== 'Avalon.Kampf' || !this.isMounted())
 			return;
 
-		var el = this.getRenderNode();
+		var el = this.getDOMNode();
 		el.classList[value == 1?'add':'remove']('fight');
 	},
 	onSend: function() {
