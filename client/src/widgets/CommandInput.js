@@ -240,6 +240,8 @@ var CommandInput = React.createClass({
                 if (e.ctrlKey)
                     break;
 
+                e.preventDefault();
+
                 if (value[0] === '!') {
                     var search = new RegExp('^' + regexEscape(value.substr(1)), "i");
                     var entry = _.find(commandHistory, function(s) { return search.test(s); });
