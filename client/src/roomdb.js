@@ -26,7 +26,7 @@ function updateRoom(roomId, data) {
 function updateCurrentRoom(data) {
 	if (!currentRoomId)
 		return;
-	updateRoom(currentRoomId);
+	updateRoom(currentRoomId, data);
 }
 
 function onConnected() {

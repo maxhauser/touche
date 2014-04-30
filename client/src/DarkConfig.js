@@ -40,13 +40,13 @@ var cns = [{
 if (DEBUG) {
 	cns.push({
 		direction: 'vertical',
-		children: ['Mapper', 'CastPanel', 'CreaturesPanel']
+		children: ['CastPanel', 'CreaturesPanel']
 	});
 }
 
 cns.push({
 	direction: 'vertical',
-	children: ['LoginPanel', 'StatusPanel', 'VersionDisplay']
+	children: ['LoginPanel', 'StatusPanel', 'Mapper', 'VersionDisplay']
 });
 
 var config = {

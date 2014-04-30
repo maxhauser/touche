@@ -39,6 +39,17 @@
   line-height: 2.5rem;
 }
 
+.alertify-logs {
+  min-width: 100px;
+  max-width: 1000px;
+  width: auto
+}
+
+.alertify-logs pre {
+  font-size: smaller;
+  margin: 0;
+}
+
 .popup-menu {
   color: black;
   position: absolute;

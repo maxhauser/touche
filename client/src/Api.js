@@ -46,6 +46,9 @@ Api = {
 	send: function(cmd) {
 		Dispatcher.fire('global.send', 'cmd', cmd);
 	},
+	atcp: function(text) {
+		Dispatcher.fire('global.send', 'atcp', text);
+	},
 	echo: function(text) {
 		Dispatcher.fire('global.ast', {type: 'echo', text: text});
 		Dispatcher.fire('global.ast', {type: 'flush' });
@@ -167,6 +170,7 @@ function dothewalk(path) {
 	var cur = path.shift();
 	if (current.id !== cur.room) {
 		Alertify.error('Gehen abgebrochen: falscher Raum.');
+		return;
 	}
 
 	if (path.length === 0) {
@@ -174,7 +178,21 @@ function dothewalk(path) {
 		return;
 	}
 
-	Dispatcher.on('room.changed', function() { _.delay(dothewalk, env.walkSpeed, path); }, true);
+	var roomChanged, expired;
+	_.delay(function() {
+		if(roomChanged)
+			dothewalk(path);
+		else
+			expired = true;
+	}, env.walkSpeed);
+
+	Dispatcher.on('room.changed', function() {
+		if(expired)
+			dothewalk(path);
+		else
+			roomChanged = true;
+	}, true);
+	
 	Dispatcher.fire('global.send', 'cmd', cur.dir);
 }
 

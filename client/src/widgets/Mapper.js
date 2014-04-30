@@ -91,9 +91,11 @@ var Mapper = React.createClass({
 	},
 	componentDidMount: function() {
 		AppDispatcher.on('room.changed', this.onRoomChanged);
+		AppDispatcher.on('room.updated', this.onRoomChanged);
 	},
 	componentWillUnmount: function() {
 		AppDispatcher.off('room.changed', this.onRoomChanged);
+		AppDispatcher.off('room.updated', this.onRoomChanged);
 	},
 	getRooms: function() {
 		var rooms = {};

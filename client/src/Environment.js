@@ -5,7 +5,7 @@ var Registry = require('./ComponentRegistry');
 var env = {
 	packetPatch: 0,
 	splitChar: ';',
-	walkSpeed: 100,
+	walkSpeed: 300,
 	tokenPipeline: new Pipeline(),
 	linePipeline: new Pipeline(),
 	commandPipeline: new Pipeline(),

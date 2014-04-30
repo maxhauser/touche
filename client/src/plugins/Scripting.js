@@ -3,6 +3,7 @@
 var env = require('../Environment');
 env.scriptMarker = env.scriptMarker || '@';
 var Alertify = require('../alertify');
+var _ = require('lodash');
 
 require('script!coffee-script/extras/coffee-script');
 
@@ -23,7 +24,7 @@ var evalix = 1;
 function evalCoffee(code, context) {
     /* jshint ignore:start */
     var src = compile(code, {bare: true, sourceFiles: ['eval ' + evalix++], shiftLine: true});
-    return new Function('api', src).call(context, context);
+    return new Function('api', 'ein', 'aus', 'return ' + src).call(context, context, true, false);
     /* jshint ignore:end */
 }
 
@@ -45,6 +46,24 @@ ch.receive(function(cmd) {
 	var script = cmd.value.substr(skip);
 	var result = evalCoffee(script, Api);
     if (result) {
-        Alertify.log(result);
+        Alertify.log("<pre>" + pretty(result).trim() + "</pre>");
     }
 });
+
+function pretty(o, i) {
+    i = i || 0;
+    if('object' === typeof o) {
+        var s = "\n";
+        _.each(o, function(v, k) {
+            s += ident(i, k + ': ' + pretty(v, i + 2));
+        });
+        return s;
+    }
+    return o + "\n";
+}
+
+function ident(n, text) {
+    if (!n)
+        return text;
+    return Array(n).join(' ') + text;
+}
