@@ -11,6 +11,7 @@ require('./widgets/VersionDisplay');
 require('./widgets/CreaturesPanel');
 require('./widgets/Mapper');
 require('./widgets/Panel');
+require('./widgets/GoTo');
 
 var Registry = require('./ComponentRegistry');
 
@@ -37,10 +38,10 @@ var cns = [{
 	}, 'CommandInput']
 }];
 
-if (DEBUG) {
+if (DEBUG || /[\?&]dev=true/.test(location.href)) {
 	cns.push({
 		direction: 'vertical',
-		children: ['CastPanel', 'CreaturesPanel']
+		children: ['CastPanel', 'CreaturesPanel', 'GoTo']
 	});
 }
 

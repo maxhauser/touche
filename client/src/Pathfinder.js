@@ -21,6 +21,28 @@ function addExit(visited, rooms, db, room) {
 	};
 }
 
+Pathfinder.prototype.getDistanceMap = function(source) {
+	var db = this.db;
+
+	var rooms = {};
+	rooms[source] = {id: source, dist: 0};
+
+	var visited = {};
+	var r = {};
+	while(true) {
+		var room = _.min(rooms, 'dist');
+		if(room === Infinity) {
+			return visited;
+		}
+
+		visited[room.id] = room;
+		delete rooms[room.id];
+
+		var exits = db.getExits(room.id);
+		_.forEach(exits, addExit(visited, rooms, db, room));
+	}
+};
+
 Pathfinder.prototype.findPath = function(source, dest, shortest) {
 	var db = this.db;
 

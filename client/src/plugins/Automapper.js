@@ -51,7 +51,8 @@ env.on('global.send', function(type, text) {
 });
 
 env.on('room.changed', function() {
-	var currentId = roomdb.current().id;
+	var current = roomdb.current();
+	var currentId = current && current.id;
 	if (lastdirection && currentId && lastroomid) {
 		var exits = {};
 		exits[lastdirection] = currentId;

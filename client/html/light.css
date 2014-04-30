@@ -11,6 +11,10 @@ hr {
     border-top: 1px solid black;
 }
 
+.goto-suggestion-distance {
+  color: #ccc;
+}
+
 .login-widget.disconnected .widget-body
 {
     border: 2px solid #888;

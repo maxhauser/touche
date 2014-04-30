@@ -24,7 +24,7 @@ var evalix = 1;
 function evalCoffee(code, context) {
     /* jshint ignore:start */
     var src = compile(code, {bare: true, sourceFiles: ['eval ' + evalix++], shiftLine: true});
-    return new Function('api', 'ein', 'aus', 'return ' + src).call(context, context, true, false);
+    return new Function('api', 'ein', 'aus', /^\s*var\s+/.test(src)?src:('return ' + src)).call(context, context, true, false);
     /* jshint ignore:end */
 }
 

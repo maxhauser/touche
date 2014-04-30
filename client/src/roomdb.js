@@ -84,10 +84,14 @@ function onAtcp(name, value) {
 
 var RoomDb = {
 	find: function(search) {
+		var room = rooms[search];
+		if (room)
+			return room;
+
 		var re = new RegExp(search, 'i');
 
-		var room = _.find(rooms, function(room) {
-			if(re.test(room.site))
+		room = _.find(rooms, function(room) {
+			if(re.test(room.site) || re.test(room.tag))
 				return true;
 		});
 		if (room)
@@ -97,6 +101,22 @@ var RoomDb = {
 			if(re.test(room.brief))
 				return true;
 		});
+	},
+	findAll: function(search, filter) {
+		var room = rooms[search];
+		if (room)
+			return room;
+
+		var re = new RegExp(search, 'i');
+
+		filter = filter || function() { return true; };
+
+		var r = [];
+		_.forOwn(rooms, function(room) {
+			if(filter(room.id) && (re.test(room.site) || re.test(room.brief) || re.test(room.tag)))
+				r.push(room);
+		});
+		return r;
 	},
 	get: function(id) {
 		return rooms[id];

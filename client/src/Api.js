@@ -49,6 +49,9 @@ Api = {
 	atcp: function(text) {
 		Dispatcher.fire('global.send', 'atcp', text);
 	},
+	mxp: function(markup) {
+		Dispatcher.fire('global.send', 'cmd', '\x1b[1z' + markup, true);
+	},
 	echo: function(text) {
 		Dispatcher.fire('global.ast', {type: 'echo', text: text});
 		Dispatcher.fire('global.ast', {type: 'flush' });
@@ -127,6 +130,9 @@ Api = {
 		},
 		find: function(dest) {
 			return roomdb.find(dest);
+		},
+		tag: function(tag) {
+			roomdb.update(roomdb.current().id, {tag: tag});
 		},
 		pathTo: function(dest) {
 			var target = roomdb.find(dest);

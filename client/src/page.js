@@ -82,7 +82,7 @@ var Page = React.createClass({
         return new Parser();
     },
     createEventSource: function(parser) {
-        var url = '/mud';
+        var url = 'mud';
         var sid = query.sid;
         if (sid) {
             url += '?sid=' + sid;
@@ -126,7 +126,7 @@ var Page = React.createClass({
         if (!sessionid || !this.state.connected) {
             return;
         }
-        queueRequest('/mud/' + sessionid + '/' + type, data);
+        queueRequest('mud/' + sessionid + '/' + type, data);
 
     },
     sendUsername: function() {
