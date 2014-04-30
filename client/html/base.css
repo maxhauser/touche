@@ -64,6 +64,7 @@
 .goto-suggestion-play {
   cursor: pointer;
   display: table-cell;
+  padding: 2px;
 }
 
 .goto-suggestion-distance {
