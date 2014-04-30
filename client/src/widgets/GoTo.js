@@ -26,8 +26,8 @@ var Suggestion = React.createClass({
 	render: function() {
 		return (<li className="goto-suggestion">
 			<span className="goto-suggestion-distance">{this.props.distance}</span>
-			<i className="goto-suggestion-play fa fa-play fa-pull-left" onClick={this.onClick}/>
 			<span className="goto-suggestion-caption">{this.props.room.brief}</span>
+			<i className="goto-suggestion-play fa fa-sign-in pull-right" title={"Gehe zu " + this.props.room.brief} onClick={this.onClick}/>
 		</li>);
 	}
 });

@@ -212,9 +212,10 @@ var Content = React.createClass({
 				break;
 
 			case 'echo':
-				this.emitText(ast.text);
+				if (ast.text === '')
+					return;
+				this.emitText(ast.text, 'echo');
 				this.newLine();
-
 				break;
 
 			case 'newline':
@@ -554,7 +555,7 @@ var Content = React.createClass({
 		this.state.tags = [];
 		this.lineel = null;
 	},
-	emitText: function(text) {
+	emitText: function(text, additionalclasses) {
 		if (!text)
 			return;
 		var tags = this.state.tags;
@@ -566,8 +567,11 @@ var Content = React.createClass({
 
 		var span = document.createElement('span');
 		var classes = this.getClasses();
+		var className = additionalclasses || '';
 		if (classes.length !== 0)
-			span.className = classes.join(' ');
+			className += ' ' + classes.join(' ');
+		span.className = className;
+
 		var styles = this.getStyles();
 		for (var key in styles) {
 			if (!styles.hasOwnProperty(key))

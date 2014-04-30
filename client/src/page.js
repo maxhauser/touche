@@ -118,7 +118,7 @@ var Page = React.createClass({
     },
     sendCommand: function(type, data, silent) {
         if (type === 'cmd' && !silent) {
-            AppDispatcher.fire('global.ast', {type: 'echo', text: data});
+            AppDispatcher.fire('global.ast', {type: 'echo', local: true, text: data});
             AppDispatcher.fire('global.ast', {type: 'flush'});
         }
 
@@ -146,6 +146,10 @@ var Page = React.createClass({
     },
     onConnected: function() {
         window.onbeforeunload = this.onBeforeUnload;
+        AppDispatcher.on('room.changed', function() {
+            this.sendCommand('atcp', 'ava_set_noinband_prompt 1');
+            this.sendCommand('atcp', 'ava_set_noinband_tpwarnung 1');
+        }.bind(this), true);
     },
     onDisconnect: function() {
         this.setState({connected: false, eventSource: null, lastSize: {width:0, height:0}});
@@ -154,6 +158,12 @@ var Page = React.createClass({
     onError: function(err) {
         Alertify.error(err.message);
     },
+    onAtcp: function(name, value) {
+        if (name === 'Avalon.Prompt') {
+            AppDispatcher.fire('global.ast', { type: 'mxp-open-element', name: 'hr'});
+            AppDispatcher.fire('global.ast', { type: 'flush' });
+        }
+    },
     componentDidMount: function() {
         this.setState({parser: this.createParser()});
         AppDispatcher.on('global.sendUsername', this.sendUsername);
@@ -161,6 +171,7 @@ var Page = React.createClass({
         AppDispatcher.on('global.send', this.sendCommand);
         AppDispatcher.on('global.disconnected', this.onDisconnect);
         AppDispatcher.on('global.connected', this.onConnected);
+        AppDispatcher.on('global.atcp', this.onAtcp);
 
         AppDispatcher.on('global.connect', this.connect);
         AppDispatcher.on('global.disconnect', this.disconnect);
@@ -175,6 +186,7 @@ var Page = React.createClass({
         AppDispatcher.off('global.disconnected', this.onDisconnect);
         AppDispatcher.off('global.connected', this.onConnected);
         AppDispatcher.off('error', this.onError);
+        AppDispatcher.off('global.atcp', this.onAtcp);
 
         AppDispatcher.off('global.connect', this.connect);
         AppDispatcher.off('global.disconnect', this.disconnect);
