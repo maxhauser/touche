@@ -4,6 +4,8 @@ require('../html/light.css');
 
 var env = require('./Environment');
 env.lightUI = true;
+env.color = '#000000';
+env.bgcolor = '#ffffff';
 
 require('./widgets/CommandInput');
 require('./widgets/ContentPanel');

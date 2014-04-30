@@ -50,7 +50,7 @@ Api = {
 		Dispatcher.fire('global.send', 'atcp', text);
 	},
 	mxp: function(markup) {
-		Dispatcher.fire('global.send', 'cmd', '\x1b[1z' + markup, true);
+		Dispatcher.fire('global.send', 'mxp', markup); 
 	},
 	echo: function(text) {
 		Dispatcher.fire('global.ast', {type: 'echo', text: text});

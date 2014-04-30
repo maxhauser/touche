@@ -109,6 +109,7 @@ var (
 
 type setWindowSizeCommand struct{ width, height byte }
 type atcpCommand string
+type mxpCommand string
 
 type message struct {
 	event string
@@ -326,6 +327,9 @@ func (sess *Session) handleCommand(cmd interface{}) error {
 	case atcpCommand:
 		return sess.writeSb(OPT_ATCP, []byte(cmd))
 
+	case mxpCommand:
+		return sess.writeSb(OPT_MXP, []byte(cmd))
+
 	default:
 		panic(ErrInvalidCommand)
 	}
@@ -341,6 +345,10 @@ func (sess *Session) SendNaws(width, height byte) {
 
 func (sess *Session) SendAtcp(text string) {
 	sess.commands <- atcpCommand(text)
+}
+
+func (sess *Session) SendMxp(text string) {
+	sess.commands <- mxpCommand(text)
 }
 
 func (sess *Session) writeSocket() error {
@@ -603,6 +611,9 @@ func (sess *Session) handleSb(data []byte) error {
 
 	case OPT_ATCP:
 		return sess.writeSocketRaw("atcp", data[1:])
+
+	case OPT_MXP:
+		return sess.writeSocketRaw("mxp", data[1:])
 	}
 
 	return nil

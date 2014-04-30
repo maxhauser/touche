@@ -96,6 +96,8 @@ func main() {
 				}
 			} else if cmd == "atcp" {
 				sess.SendAtcp(string(body))
+			} else if cmd == "mxp" {
+				sess.SendMxp(string(body))
 			}
 		}
 	})

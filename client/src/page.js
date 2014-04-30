@@ -110,6 +110,10 @@ var Page = React.createClass({
             AppDispatcher.fire('global.atcp', comps[1], comps[2]);
         });
 
+        source.addEventListener('mxp', function(msg) {
+            AppDispatcher.fire('global.mxp', msg.data);
+        });
+
         source.addEventListener('error', function(err) {
             //console.log('EventSource error:', err);
             source.close();
@@ -146,6 +150,7 @@ var Page = React.createClass({
     },
     onConnected: function() {
         window.onbeforeunload = this.onBeforeUnload;
+        this.sendCommand('mxp', '<reported color="' + env.color + '" + backcolor="' + env.bgcolor + '">');
         AppDispatcher.on('room.changed', function() {
             this.sendCommand('atcp', 'ava_set_noinband_prompt 1');
             this.sendCommand('atcp', 'ava_set_noinband_tpwarnung 1');

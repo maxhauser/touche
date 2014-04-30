@@ -321,7 +321,7 @@
       if ((currentState === OPEN || currentState === CONNECTING) &&
           (isLoadEnd || isWrongStatusCodeOrContentType || /*(charOffset > 1024 * 1024) || */ (timeout === 0 && !wasActivity))) {
         currentState = WAITING;
-        console.log('aborted eventsource', isLoadEnd, isWrongStatusCodeOrContentType, charOffset, timeout, wasActivity, new Error('stack').stack);
+        //console.log('aborted eventsource', isLoadEnd, isWrongStatusCodeOrContentType, charOffset, timeout, wasActivity, new Error('stack').stack);
         xhr.abort();
         if (timeout !== 0) {
           clearTimeout(timeout);

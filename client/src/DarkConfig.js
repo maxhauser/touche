@@ -2,6 +2,10 @@ require('topcoat/css/topcoat-desktop-dark.css');
 require('../html/base.css');
 require('../html/dark.css');
 
+var env = require('./Environment');
+env.color = '#c6c8c8';
+env.bgcolor = '#222222';
+
 require('./widgets/CommandInput');
 require('./widgets/ContentPanel');
 require('./widgets/LoginPanel');
