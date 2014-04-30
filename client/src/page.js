@@ -122,8 +122,7 @@ var Page = React.createClass({
     },
     sendCommand: function(type, data, silent) {
         if (type === 'cmd' && !silent) {
-            AppDispatcher.fire('global.ast', {type: 'echo', local: true, text: data});
-            AppDispatcher.fire('global.ast', {type: 'flush'});
+            AppDispatcher.fire('global.ast', {type: 'echo', text: data});
         }
 
         var sessionid = this.state.sessionid;
@@ -159,6 +158,7 @@ var Page = React.createClass({
     onDisconnect: function() {
         this.setState({connected: false, eventSource: null, lastSize: {width:0, height:0}});
         window.onbeforeunload = null;
+        Alertify.error('Die Verbindung wurde getrennt.');
     },
     onError: function(err) {
         Alertify.error(err.message);
@@ -206,9 +206,6 @@ var Page = React.createClass({
     disconnect: function() {
             this.state.eventSource.close();
             AppDispatcher.fire('global.disconnected');
-            AppDispatcher.fire('global.ast', {type: 'newline'});
-            AppDispatcher.fire('global.ast', {type: 'echo', text: 'Die Verbindung wurde getrennt.'});
-            AppDispatcher.fire('global.ast', {type: 'flush'});
     },
     renderWidget: function(config) {
         if ('string' === typeof config)

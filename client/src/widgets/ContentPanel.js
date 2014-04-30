@@ -30,7 +30,7 @@ var PopupMenuItem = React.createClass({
 		this.props.onClick(this.props.item);
 	},
 	render: function() {
-		return <li className="popup-menu-item"><a href="#" onClick={this.onClick}>{this.props.item.caption}</a></li>;
+		return <li className="popup-menu-item" onClick={this.onClick}><a href="#">{this.props.item.caption}</a></li>;
 	}
 });
 
@@ -212,10 +212,11 @@ var Content = React.createClass({
 				break;
 
 			case 'echo':
-				if (ast.text === '')
+				if (ast.text === '' && (!this.lineel || !this.lineel.hasChildNodes))
 					return;
 				this.emitText(ast.text, 'echo');
 				this.newLine();
+				this.batchComplete();
 				break;
 
 			case 'newline':

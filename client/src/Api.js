@@ -54,7 +54,6 @@ Api = {
 	},
 	echo: function(text) {
 		Dispatcher.fire('global.ast', {type: 'echo', text: text});
-		Dispatcher.fire('global.ast', {type: 'flush' });
 	},
 	ticker: function(name, seconds, handler) {
 		var interval = window.setInterval(handler, seconds * 1000);
