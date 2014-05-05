@@ -30,7 +30,7 @@ var PopupMenuItem = React.createClass({
 		this.props.onClick(this.props.item);
 	},
 	render: function() {
-		return <li className="popup-menu-item" onClick={this.onClick}><a href="#">{this.props.item.caption}</a></li>;
+		return <li className="popup-menu-item" onClick={this.onClick}><a>{this.props.item.caption}</a></li>;
 	}
 });
 

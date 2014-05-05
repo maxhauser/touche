@@ -16,6 +16,8 @@ require('./widgets/VersionDisplay');
 require('./widgets/CreaturesPanel');
 require('./widgets/Mapper');
 require('./widgets/Panel');
+require('./widgets/Compass');
+require('./widgets/CommandPanel');
 var Registry = require('./ComponentRegistry');
 
 Registry.define('plugins.scripting', function() {
@@ -27,7 +29,7 @@ Registry.define('plugins.scripting', function() {
 var cns = [
 {
 	direction: 'vertical',
-	children: ['LoginPanel']
+	children: ['LoginPanel', 'Compass']
 },
 {
 	direction: 'vertical',
@@ -40,7 +42,12 @@ var cns = [
 		widget: 'ContentPanel',
 		mainContent: true,
 		/*style: {'line-height': 10, 'font-size': 10}*/
-	}, 'CommandInput']
+	},
+	'CommandInput',
+	{
+		widget: 'CommandPanel',
+		style: {position: 'absolute'}
+	}]
 },
 {
 	direction: 'vertical',

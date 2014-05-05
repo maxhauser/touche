@@ -150,10 +150,8 @@ var Page = React.createClass({
     onConnected: function() {
         window.onbeforeunload = this.onBeforeUnload;
         this.sendCommand('mxp', '<reported color="' + env.color + '" + backcolor="' + env.bgcolor + '">');
-        AppDispatcher.on('room.changed', function() {
-            this.sendCommand('atcp', 'ava_set_noinband_prompt 1');
-            this.sendCommand('atcp', 'ava_set_noinband_tpwarnung 1');
-        }.bind(this), true);
+        this.sendCommand('atcp', 'ava_set_noinband_prompt 1');
+        this.sendCommand('atcp', 'ava_set_noinband_tpwarnung 1');
     },
     onDisconnect: function() {
         this.setState({connected: false, eventSource: null, lastSize: {width:0, height:0}});

@@ -25,10 +25,10 @@ Pathfinder.prototype.getDistanceMap = function(source) {
 	var db = this.db;
 
 	var rooms = {};
+	var visited = {};
+	
 	rooms[source] = {id: source, dist: 0};
 
-	var visited = {};
-	var r = {};
 	while(true) {
 		var room = _.min(rooms, 'dist');
 		if(room === Infinity) {

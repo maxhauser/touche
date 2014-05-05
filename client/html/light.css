@@ -11,6 +11,16 @@ hr {
     border-top: 1px solid black;
 }
 
+
+.commands-widget-list-item {
+    color: #777;
+}
+
+.compass-widget {
+    position: absolute;
+    bottom: 20px;
+}
+
 .goto-suggestion-distance {
   color: #ccc;
 }

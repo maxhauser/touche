@@ -123,7 +123,7 @@ var CommandInput = React.createClass({
     },
     onEditorCancel: function() {
         if (this.state.compose)
-            AppDispatcher.fire('global.send', 'cmd', '*q\nno');
+            AppDispatcher.fire('global.send', 'cmd', '*q\nno', true);
         this.setState({compose: false});
         var input = this.refs.input.getDOMNode();
         input.textContent = '';
@@ -133,7 +133,7 @@ var CommandInput = React.createClass({
         var value = normalize(input.textContent);
         if (this.state.compose) {
             AppDispatcher.fire('global.send', 'atcp', 'olesetbuf\n' + value + '\n');
-            AppDispatcher.fire('global.send', 'cmd', '*s');
+            AppDispatcher.fire('global.send', 'cmd', '*s', true);
         } else {
             env.commandPipeline.send({type:'cmd', value: value});
         }
