@@ -39,6 +39,7 @@ func init() {
 
 	flag.BoolVar(&session.Debugtelnet, "debug", false, "Telnet debugging")
 	flag.BoolVar(&session.Compression, "compression", false, "Use gzip compression")
+	flag.BoolVar(&session.SendRemoteIp, "sendremoteip", false, "Send the remote ip to the mud")
 	flag.IntVar(&session.MaxSessionConnections, "multimaxconn", 2, "Max. connection count per session")
 
 	flag.Parse()

@@ -18,9 +18,24 @@ var CreaturesPanel = React.createClass({
 	},
 	componentDidMount: function() {
 		AppDispatcher.on('global.ast', this.onEmit);
+		AppDispatcher.on('global.mxp', this.onMxp);
+		AppDispatcher.on('global.atcp', this.onAtcp);
 	},
 	componentWillUnmount: function() {
 		AppDispatcher.off('global.ast', this.onEmit);
+		AppDispatcher.off('global.mxp', this.onMxp);
+		AppDispatcher.off('global.atcp', this.onAtcp);
+	},
+	onAtcp: function(name, value) {
+		if (name === 'Avalon.Getoetet') {
+			var creatures = this.state.creatures;
+			delete creatures[value];
+			this.setState({creatures: creatures});
+		}
+	},
+	onMxp: function(markup) {
+		if (/<expire\s+ROOM>/gi.test(markup))
+			this.setState({creatures:{}});
 	},
 	onEmit: function(ast) {
 		if (ast.type === 'mxp-open-element') {

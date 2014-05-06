@@ -99,6 +99,7 @@ var MaxSessionConnections = 2
 
 var Debugtelnet = false
 var Compression = false
+var SendRemoteIp = false
 
 const PingInterval = 5 * time.Second
 
@@ -129,6 +130,7 @@ type Session struct {
 	termtypeix int
 	debugbuf   []byte
 	lastWrite  time.Time
+	remoteAddr string
 }
 
 func (sess *Session) FlushTelnetBuffer() {
@@ -218,15 +220,16 @@ func NewSession(sid string, w http.ResponseWriter, r *http.Request, onClose func
 	errch := make(chan error, 20)
 	commandch := make(chan interface{})
 	sess := &Session{
-		conn:     conn,
-		writer:   mw,
-		errch:    errch,
-		buf:      make([]byte, 0, 1024),
-		sbbuf:    make([]byte, 0, 64),
-		reader:   bufio.NewReader(conn),
-		debugbuf: make([]byte, 0, 256),
-		id:       sid,
-		commands: commandch,
+		conn:       conn,
+		writer:     mw,
+		errch:      errch,
+		buf:        make([]byte, 0, 1024),
+		sbbuf:      make([]byte, 0, 64),
+		reader:     bufio.NewReader(conn),
+		debugbuf:   make([]byte, 0, 256),
+		id:         sid,
+		commands:   commandch,
+		remoteAddr: r.RemoteAddr,
 	}
 
 	go func() {
@@ -610,6 +613,9 @@ func (sess *Session) handleSb(data []byte) error {
 		return sess.writeSb(OPT_LINEMODE, []byte{MODE, replymask})
 
 	case OPT_ATCP:
+		if string(data[1:]) == "Auth.Request ON" && SendRemoteIp {
+			sess.sendRemoteIp()
+		}
 		return sess.writeSocketRaw("atcp", data[1:])
 
 	case OPT_MXP:
@@ -617,6 +623,24 @@ func (sess *Session) handleSb(data []byte) error {
 	}
 
 	return nil
+}
+
+func (sess *Session) sendRemoteIp() {
+	addr := sess.remoteAddr
+	portsep := strings.Index(addr, ":")
+	if portsep != -1 {
+		addr = addr[:portsep]
+	}
+	names, err := net.LookupAddr(addr)
+
+	var name string
+	if err == nil && len(names) > 0 {
+		name = names[0]
+	} else {
+		name = addr
+	}
+	name = strings.TrimSuffix(name, ".")
+	err = sess.writeSbString(OPT_ATCP, "ava_remoteip "+addr+" "+name)
 }
 
 func (sess *Session) handleDo(second byte) error {
