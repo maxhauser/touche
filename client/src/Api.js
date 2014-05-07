@@ -72,10 +72,10 @@ Api = {
 	},
 	action: function(search, commands, priority) {
 		var re = (search instanceof RegExp)?search:new RegExp(search, 'i');
-		actions[search] = { handler: commands, priority: priority, regex: re };
+		actions[search.source||search] = { handler: commands, priority: priority, regex: re };
 	},
 	unaction: function(search){
-		delete actions[search];
+		delete actions[search.source||search];
 	},
 	alias: function(name, command) {
 		aliases[name] = command;
