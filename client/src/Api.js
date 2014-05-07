@@ -71,7 +71,8 @@ Api = {
 		}
 	},
 	action: function(search, commands, priority) {
-		actions[search] = { handler: commands, priority: priority, regex: new RegExp(search) };
+		var re = (search instanceof RegExp)?search:new RegExp(search, 'i');
+		actions[search] = { handler: commands, priority: priority, regex: re };
 	},
 	unaction: function(search){
 		delete actions[search];
