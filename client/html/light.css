@@ -11,6 +11,9 @@ hr {
     border-top: 1px solid black;
 }
 
+.compass-part:hover * {
+    filter:url(#back-glow);
+}
 
 .commands-widget-list-item {
     color: #777;

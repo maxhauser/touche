@@ -22,7 +22,7 @@ var Pointer = React.createClass({
 		}
 		return (
 			<g transform={"rotate(" + this.props.rotate + ")" + (this.props.scale?" scale(" + this.props.scale + ")":"")}
-				onClick={this.handleClick} style={style}>
+				onClick={this.handleClick} style={style} className={this.props.cmd?'compass-part':''}>
 				<polygon points="0 -80 -15 -15 0 0" fill="white" stroke="black" style={{'stroke-width':2}}/>
 				<polygon points="0 -80 15 -15 0 0" fill="black" stroke="black" style={{'stroke-width':2}}/>
 				<text x={0} y={-84} style={{textAnchor:'middle',fontFamily:'President',fontSize:'1.4rem'}}>{this.props.text}</text>
@@ -89,6 +89,10 @@ var Compass = React.createClass({
 		var arrowUp = '\uf062';
 		var arrowDown = '\uf063';
 		var exit = '\uf08b';
+		var filter = '<filter id="back-glow"><feColorMatrix type="matrix" values="0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0 0.7 0"/>' +
+			'<feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>' +
+			'<feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+			'</filter>';
 		if (this.state.connected) {
 			els = [<Pointer text="NO" rotate={45} scale={0.8} cmd={exits.nordosten}/>,
 					<Pointer text="SO" rotate={135} scale={0.8} cmd={exits.suedosten}/>,
@@ -106,9 +110,10 @@ var Compass = React.createClass({
 			if (exits.raus)
 				els.push(<Icon x={80} y={80} text={exit} cmd={exits.raus}/>);
 			els = (<svg width={180} height={180}>
-				<g transform="translate(100,100) scale(0.8)">
+			<g dangerouslySetInnerHTML={{__html:filter}}/>
+			<g transform="translate(100,100) scale(0.8)">
 				{els}
-				</g>
+			</g>
 			</svg>);
 		}
 		return <Widget className="compass-widget">{els}</Widget>;
