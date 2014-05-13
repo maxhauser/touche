@@ -205,14 +205,11 @@ var Mapper = React.createClass({
 		var room = this.state.room;
 		var els = [];
 		var rooms = this.getRooms();
-		if (rooms.length !== 0) {
-			els.push(
+		return (<Widget caption={'Karte' + (room && room.area ? (': ' + room.area) : '')}>
 			<svg width="200px" height="200px">
 				<g transform="translate(100,100)">{rooms}</g>
 			</svg>
-			);
-		}
-		return <Widget caption={'Karte' + (room && room.area ? (': ' + room.area) : '')}>{els}</Widget>;
+		</Widget>);
 	}
 });
 

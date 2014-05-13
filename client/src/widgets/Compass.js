@@ -58,6 +58,7 @@ var Compass = React.createClass({
 	},
 	onConnected: function() {
 		env.fire('global.send', 'atcp', 'ava_set_ka 1');
+		env.fire('global.send', 'atcp', 'ava_set_noinband_ka 1');
 	},
 	onAtcp: function(name, value) {
 		if (name !== 'Avalon.Kommandoanzeige')
@@ -93,7 +94,7 @@ var Compass = React.createClass({
 			'<feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>' +
 			'<feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
 			'</filter>';
-		if (this.state.connected) {
+		if (this.state.connected || !env.lightUI) {
 			els = [<Pointer text="NO" rotate={45} scale={0.8} cmd={exits.nordosten}/>,
 					<Pointer text="SO" rotate={135} scale={0.8} cmd={exits.suedosten}/>,
 					<Pointer text="SW" rotate={225} scale={0.8} cmd={exits.suedwesten}/>,
@@ -116,7 +117,7 @@ var Compass = React.createClass({
 			</g>
 			</svg>);
 		}
-		return <Widget className="compass-widget">{els}</Widget>;
+		return <Widget caption="Kompass" className="compass-widget">{els}</Widget>;
 	}
 });
 
