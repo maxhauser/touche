@@ -45,7 +45,7 @@ var LoginPanel = React.createClass({
         return (<Widget caption="Verbindung" className={"login-widget " + this.state.state}>
             {title}
             <form action="index.html" className="connection-form" method="POST" onSubmit={this.click} autoComplete="on">
-                {(this.state.state !== 'connected' || !env.lightUI)?[
+                {(this.state.state !== 'connected')?[
                 <input key="u" name="username" title="Benutzername" ref="user" type="text" className="topcoat-text-input--large" placeholder="Benutzername"/>,<br key="b1"/>,
                 <input key="p" name="pwd" title="Passwort" ref="pwd" type="password" className="topcoat-text-input--large" placeholder="Passwort"/>,<br key="b2"/>
                 ]:[]}

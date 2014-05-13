@@ -119,6 +119,85 @@ a {
   margin: 0;
 }
 
+.commands-widget {
+  display: table-cell;
+}
+
+.commands-widget-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.commands-widget-list-item {
+  display: inline-block;
+  padding: 0.2rem;
+  font-size: smaller;
+}
+
+a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.echo {
+    color: orange;
+    font-weight: bolder;
+}
+
+.goto-suggestion-list {
+  list-style-type: none;
+  padding: 5px;
+  margin: 0;
+  display: table;
+  width: 100%;
+}
+
+.goto-no-suggestions {
+  padding: 0 5px;
+  color: #777;
+}
+
+.goto-suggestion {
+  line-height: 1rem;
+  font-size: 0.85em;
+  clear: both;
+  margin: 0.4rem 0;
+  display: table-row;
+}
+
+.goto-suggestion-play {
+  cursor: pointer;
+  display: table-cell;
+  padding: 2px;
+}
+
+.goto-suggestion-distance {
+  color: #777;
+  display: table-cell;
+  text-align: right;
+}
+
+.goto-suggestion-caption {
+  padding-left: 5px;
+  display: table-cell;
+}
+
+.connection-form {
+  line-height: 2.5rem;
+}
+
+.alertify-logs {
+  min-width: 100px;
+  max-width: 1000px;
+  width: auto
+}
+
+.alertify-logs pre {
+  font-size: smaller;
+  margin: 0;
+}
+
 .popup-menu {
   color: black;
   position: absolute;

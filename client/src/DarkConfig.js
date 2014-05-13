@@ -40,19 +40,17 @@ var cns = [{
 		mainContent: true,
 		/*style: {'line-height': 10, 'font-size': 10}*/
 	}, 'CommandInput']
+}, {
+	direction: 'vertical',
+	children: ['StatusPanel', 'CreaturesPanel']
+}, {
+	direction: 'vertical',
+	children: ['LoginPanel', 'Mapper', 'GoTo', 'VersionDisplay']
 }];
 
 if (DEBUG || /[\?&]dev=true/.test(location.href)) {
-	cns.push({
-		direction: 'vertical',
-		children: ['CastPanel', 'CreaturesPanel', 'GoTo']
-	});
+	cns[1].children.push('CastPanel');
 }
-
-cns.push({
-	direction: 'vertical',
-	children: ['LoginPanel', 'StatusPanel', 'Mapper', 'VersionDisplay']
-});
 
 var config = {
 	plugins: ['scripting', 'automapper'],
