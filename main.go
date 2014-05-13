@@ -35,7 +35,11 @@ var sessions = make(map[string]*session.Session)
 
 func init() {
 	mime.AddExtensionType(".map", "application/json")
-	mime.AddExtensionType(".otf", "font/opentype")
+	mime.AddExtensionType(".otf", "application/x-font-opentype")
+	mime.AddExtensionType(".eot", "application/vnd.ms-fontobject")
+	mime.AddExtensionType(".woff", "application/x-font-woff")
+	mime.AddExtensionType(".svg", "image/svg+xml")
+	mime.AddExtensionType(".ttf", "application/x-font-ttf")
 
 	flag.BoolVar(&session.Debugtelnet, "debug", false, "Telnet debugging")
 	flag.BoolVar(&session.Compression, "compression", false, "Use gzip compression")

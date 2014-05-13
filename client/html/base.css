@@ -30,9 +30,14 @@
 }
 
 @font-face {
-  font-family: "President";
-  src: url("President.otf");
-  font-weight: 800;
+    font-family: 'President';
+    src: url('president-webfont.eot');
+    src: url('president-webfont.eot?#iefix') format('embedded-opentype'),
+         url('president-webfont.woff') format('woff'),
+         url('president-webfont.ttf') format('truetype'),
+         url('president-webfont.svg#presidentregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .commands-widget {
