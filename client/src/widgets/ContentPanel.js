@@ -510,10 +510,10 @@ var Content = React.createClass({
 		this.setState({afterinput: false});
 		if (frag) {
 			var atbottom = this.atBottom();
+			this.fragel = null;
 			this.getRenderNode().appendChild(frag);
 			if (this.props.autoScroll && atbottom)
 				this.scrollToBottom();
-			this.fragel = null;
 		}
 	},
 	getLineEl: function() {
@@ -553,7 +553,8 @@ var Content = React.createClass({
 			span.textContent = ' ';
 			lineel.appendChild(span);
 		}
-		this.state.tags = [];
+		var tags = this.state.tags;
+		tags.splice(0, tags.length);
 		this.lineel = null;
 	},
 	emitText: function(text, additionalclasses) {
@@ -563,8 +564,6 @@ var Content = React.createClass({
 
 		if (tags.length !== 0 && tags[0].ignoreChildren)
 			return;
-		
-		var lineel = this.getLineEl();
 
 		var span = document.createElement('span');
 		var classes = this.getClasses();
@@ -580,7 +579,7 @@ var Content = React.createClass({
 			span.style[key] = styles[key];
 		}
 		span.textContent = text;
-		var parent = lineel;
+		var parent = this.getLineEl();
 		for (var i=0,l=tags.length;i<l;i++) {
 			var tag = tags[i];
 			if (tag.el) {
@@ -589,7 +588,6 @@ var Content = React.createClass({
 			}
 		}
 		parent.appendChild(span);
-		this.textStart = this.pos;
 	}
 });
 
