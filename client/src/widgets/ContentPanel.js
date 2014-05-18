@@ -424,14 +424,14 @@ var Content = React.createClass({
 	getStyles: function() {
 		var tags = this.state.tags;
 		if (tags.length !== 0)
-			return tags[tags.length-1].styles;
+			return tags[0].styles;
 		else
 			return this.state.styles;
 	},
 	setStyles: function(styles) {
 		var tags = this.state.tags;
 		if (tags.length !== 0)
-			tags[tags.length-1].styles = styles;
+			tags[0].styles = styles;
 		else
 			this.state.styles = styles;
 	},
