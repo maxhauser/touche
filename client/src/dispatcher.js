@@ -52,6 +52,8 @@ var Dispatcher = function() {
             }
         }
     };
+
+    this.un = this.off;
 };
 
 module.exports = Dispatcher;

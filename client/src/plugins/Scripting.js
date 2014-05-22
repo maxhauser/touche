@@ -21,12 +21,21 @@ if ((typeof btoa !== "undefined" && btoa !== null) && (typeof JSON !== "undefine
 }
 
 var evalix = 1;
-function evalCoffee(code, context) {
+function evalCoffee(context, code) {
     /* jshint ignore:start */
     var src = compile(code, {bare: true, sourceFiles: ['eval ' + evalix++], shiftLine: true});
     return new Function('api', 'ein', 'aus', /^\s*var\s+/.test(src)?src:('return ' + src)).call(context, context, true, false);
     /* jshint ignore:end */
 }
+
+function execCoffee(context, code, name) {
+    /* jshint ignore:start */
+    var src = compile(code, {bare: true, sourceFiles: [name||('exec ' + evalix++)], shiftLine: true});
+    return new Function('api', 'ein', 'aus', src).call(context, context, true, false);
+    /* jshint ignore:end */
+}
+
+Api.exec = execCoffee.bind(null, Api);
 
 var ch = env.commandPipeline.add();
 
@@ -44,7 +53,7 @@ ch.receive(function(cmd) {
     }
 
 	var script = cmd.value.substr(skip);
-	var result = evalCoffee(script, Api);
+	var result = evalCoffee(Api, script);
     if (result) {
         Alertify.log("<pre>" + pretty(result).trim() + "</pre>");
     }

@@ -6,6 +6,7 @@ var AppDispatcher = require('../AppDispatcher');
 var Session = require('../Session');
 var Trie = require('../trie');
 var env = require('../Environment');
+var StringUtils = require('../StringUtils');
 
 var exits = {
     87: { dir: 'norden', def: 'n' }, // w
@@ -94,14 +95,14 @@ var CommandInput = React.createClass({
         }
     },
     componentDidMount: function() {
-        AppDispatcher.on('global.atcp', this.onAtcp);
-        AppDispatcher.on('global.inputExpected', this.stealFocus);
-        AppDispatcher.on('global.ast', this.populateTrie);
+        AppDispatcher.on('atcp', this.onAtcp);
+        AppDispatcher.on('inputExpected', this.stealFocus);
+        AppDispatcher.on('ast', this.populateTrie);
     },
     componentWillUnmount: function() {
-        AppDispatcher.off('global.inputExpected', this.stealFocus);
-        AppDispatcher.off('global.atcp', this.onAtcp);
-        AppDispatcher.off('global.ast', this.populateTrie);
+        AppDispatcher.off('inputExpected', this.stealFocus);
+        AppDispatcher.off('atcp', this.onAtcp);
+        AppDispatcher.off('ast', this.populateTrie);
     },
     onWrapperClick: function() {
         this.refs.input.getDOMNode().focus();
@@ -111,7 +112,8 @@ var CommandInput = React.createClass({
         return (
             <div title="Kommandoeingabe" className={"topcoat-text-input--large command-input-wrapper " + (this.state.compose?'compose':'')} onClick={this.onWrapperClick}>
                 <div className="command-input" title="Kommandoeingabe" aria-role="textbox" aria-autocompletion="inline">
-                    <span ref="input" aria-live="assertive" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true} onKeyDown={this.keydown} onKeyPress={this.keypress}/>
+                    <span ref="input" aria-live="assertive" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true}
+                        onKeyDown={this.keydown} onKeyPress={this.keypress} onPaste={this.handlePasteContent}/>
                     <span aria-role="presentation" className={'input-suggestions' + (suggestion?'':' hidden')}>{suggestion}</span>
                 </div>
                 <div className="command-compose-actions">
@@ -121,9 +123,29 @@ var CommandInput = React.createClass({
             </div>
         );
     },
+    handlePasteContent: function(event) {
+        var text;
+        event.preventDefault();
+
+        var html = event.clipboardData.getData('text/html');
+
+        if (html) {
+            var span = document.createElement('span');
+            span.innerHTML = html;
+            text = span.textContent;
+        } else {
+            text = event.clipboardData.getData('text/plain');
+        }
+
+        if (text) {
+            var el = this.refs.input.getDOMNode();
+            el.textContent = text;
+            this.moveCaretToEnd(el);
+        }
+    },
     onEditorCancel: function() {
         if (this.state.compose)
-            AppDispatcher.fire('global.send', 'cmd', '*q\nno', true);
+            AppDispatcher.fire('send', 'cmd', '*q\nno', true);
         this.setState({compose: false});
         var input = this.refs.input.getDOMNode();
         input.textContent = '';
@@ -132,8 +154,8 @@ var CommandInput = React.createClass({
         var input = this.refs.input.getDOMNode();
         var value = normalize(input.textContent);
         if (this.state.compose) {
-            AppDispatcher.fire('global.send', 'atcp', 'olesetbuf\n' + value + '\n');
-            AppDispatcher.fire('global.send', 'cmd', '*s', true);
+            AppDispatcher.fire('send', 'atcp', 'olesetbuf\n' + StringUtils.splitLine(value,75) + '\n');
+            AppDispatcher.fire('send', 'cmd', '*s', true);
         } else {
             env.commandPipeline.send({type:'cmd', value: value});
         }
@@ -216,7 +238,7 @@ var CommandInput = React.createClass({
         if (exit && (e.keyCode > 96 || e.altKey))
         {
             currentexits.lastmove = exit.def;
-            AppDispatcher.fire('global.send', 'cmd', currentexits.exits[exit.dir] || exit.def);
+            AppDispatcher.fire('send', 'cmd', currentexits.exits[exit.dir] || exit.def);
             return true;
         }
     },

@@ -51,12 +51,12 @@ var StatusPanel = React.createClass({
 		this.replaceState({});
 	},
 	componentDidMount: function() {
-		AppDispatcher.on('global.atcp', this.onAtcp);
-		AppDispatcher.on('global.disconnected', this.onDisconnected);
+		AppDispatcher.on('atcp', this.onAtcp);
+		AppDispatcher.on('disconnected', this.onDisconnected);
 	},
 	componentWillUnmount: function() {
-		AppDispatcher.off('global.atcp', this.onAtcp);
-		AppDispatcher.off('global.disconnected', this.onDisconnected);
+		AppDispatcher.off('atcp', this.onAtcp);
+		AppDispatcher.off('disconnected', this.onDisconnected);
 	},
 	render: function() {
 		var state = this.state;

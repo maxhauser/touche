@@ -6,8 +6,8 @@ var env = require('../Environment');
 var CommandItem = React.createClass({
 	handleClick: function(event) {
 		event.preventDefault();
-		env.fire('global.send', 'cmd', this.props.command.cmd);
-		env.fire('global.inputExpected');
+		env.fire('send', 'cmd', this.props.command.cmd);
+		env.fire('inputExpected');
 	},
 	render: function() {
 		var command = this.props.command;
@@ -22,8 +22,8 @@ var CommandPanel = React.createClass({
 		return {commands: []};
 	},
 	onConnected: function() {
-		env.fire('global.send', 'atcp', 'ava_set_ka 1');
-		env.fire('global.send', 'atcp', 'ava_set_noinband_ka 1');
+		env.fire('send', 'atcp', 'ava_set_ka 1');
+		env.fire('send', 'atcp', 'ava_set_noinband_ka 1');
 	},
 	onAtcp: function(name, value) {
 		if (name !== 'Avalon.Kommandoanzeige')
@@ -47,14 +47,14 @@ var CommandPanel = React.createClass({
 		this.setState({commands: []});
 	},
 	componentDidMount: function() {
-		env.on('global.connected', this.onConnected);
-		env.on('global.disconnected', this.onDisconnected);
-		env.on('global.atcp', this.onAtcp);
+		env.on('connected', this.onConnected);
+		env.on('disconnected', this.onDisconnected);
+		env.on('atcp', this.onAtcp);
 	},
 	componentWillUnmount: function() {
-		env.off('global.atcp', this.onAtcp);
-		env.off('global.connected', this.onConnected);
-		env.off('global.disconnected', this.onDisconnected);
+		env.off('atcp', this.onAtcp);
+		env.off('connected', this.onConnected);
+		env.off('disconnected', this.onDisconnected);
 	},
 	renderCommand: function(command){
 		return <CommandItem command={command}/>;

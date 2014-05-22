@@ -16,21 +16,21 @@ var LoginPanel = React.createClass({
         this.setState({state: 'disconnected'});
     },
     componentDidMount: function() {
-        AppDispatcher.on('global.connected', this.onConnected); 
-        AppDispatcher.on('global.disconnected', this.onDisconnected); 
+        AppDispatcher.on('connected', this.onConnected); 
+        AppDispatcher.on('disconnected', this.onDisconnected); 
     },
     componentWillUnmount: function() {
-        AppDispatcher.off('global.connected', this.onConnected); 
-        AppDispatcher.off('global.disconnected', this.onDisconnected); 
+        AppDispatcher.off('connected', this.onConnected); 
+        AppDispatcher.off('disconnected', this.onDisconnected); 
     },
     click: function(e) {
         e.preventDefault();
 
-        AppDispatcher.fire('global.inputExpected');
+        AppDispatcher.fire('inputExpected');
         if (this.state.state === 'connected')
-            AppDispatcher.fire('global.disconnect');
+            AppDispatcher.fire('disconnect');
         else {
-            AppDispatcher.fire('global.connect', this.refs.user.getDOMNode().value, this.refs.pwd.getDOMNode().value);
+            AppDispatcher.fire('connect', this.refs.user.getDOMNode().value, this.refs.pwd.getDOMNode().value);
             this.setState({state: 'connecting'});
         }
     },

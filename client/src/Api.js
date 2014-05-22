@@ -43,8 +43,20 @@ mych.receive(function(line) {
 
 Api = {
 	env: env,
+	on: function(eventName, handler) {
+		Dispatcher.on(eventName, handler);
+	},
+	un: function(eventName, handler) {
+		Dispatcher.un(eventName, handler);
+	},
 	send: function(cmd) {
-		Dispatcher.fire('global.send', 'cmd', cmd);
+		Dispatcher.fire('send', 'cmd', cmd);
+	},
+	atcp: function(text) {
+		Dispatcher.fire('send', 'atcp', text);
+	},
+	mxp: function(markup) {
+		Dispatcher.fire('send', 'mxp', markup); 
 	},
 	atcp: function(text) {
 		Dispatcher.fire('global.send', 'atcp', text);
@@ -53,7 +65,7 @@ Api = {
 		Dispatcher.fire('global.send', 'mxp', markup); 
 	},
 	echo: function(text) {
-		Dispatcher.fire('global.ast', {type: 'echo', text: text});
+		Dispatcher.fire('ast', {type: 'echo', text: text});
 	},
 	ticker: function(name, seconds, handler) {
 		var interval = window.setInterval(handler, seconds * 1000);
@@ -199,7 +211,7 @@ function dothewalk(path) {
 			roomChanged = true;
 	}, true);
 	
-	Dispatcher.fire('global.send', 'cmd', cur.dir);
+	Dispatcher.fire('send', 'cmd', cur.dir);
 }
 
 function notimplemented(name) {

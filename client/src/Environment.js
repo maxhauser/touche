@@ -14,7 +14,7 @@ var env = {
 	fire: Dispatcher.fire.bind(Dispatcher)
 };
 
-env.tokenPipeline.receive(function(ast) { Dispatcher.fire('global.ast', ast); });
+env.tokenPipeline.receive(function(ast) { Dispatcher.fire('ast', ast); });
 
 var currentLine = [];
 var patchTimeout = null;
@@ -46,7 +46,7 @@ env.linePipeline.receive(function(line) {
 	});
 });
 
-env.commandPipeline.receive(function(cmd) { Dispatcher.fire('global.send', cmd.type, cmd.value); });
+env.commandPipeline.receive(function(cmd) { Dispatcher.fire('send', cmd.type, cmd.value); });
 
 var inch = env.commandPipeline.add();
 inch.receive(function(cmd) {
@@ -56,9 +56,9 @@ inch.receive(function(cmd) {
 	var m = /\$\$enable\s+(.*)/.exec(cmd.value);
 	if (m) {
 		var plugin = m[1];
-		Dispatcher.fire('global.ast', {type:'text', text:'SYSTEM: enabling plugin ' + plugin});
-		Dispatcher.fire('global.ast', {type:'newline'});
-		Dispatcher.fire('global.ast', {type:'flush'});
+		Dispatcher.fire('ast', {type:'text', text:'SYSTEM: enabling plugin ' + plugin});
+		Dispatcher.fire('ast', {type:'newline'});
+		Dispatcher.fire('ast', {type:'flush'});
 		Registry.require('plugins.' + plugin);
 		return;
 	}

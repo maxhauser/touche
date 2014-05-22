@@ -100,14 +100,18 @@ var Page = React.createClass({
 
         source.addEventListener('sessionid', function(msg) {
             this.setState({sessionid: msg.data});
-            AppDispatcher.fire('global.connected', msg.data);
+            AppDispatcher.fire('connected', msg.data);
         }.bind(this), false);
 
         source.addEventListener('atcp', function(msg) {
             var comps = /^(\S+)\s*(.*)$/.exec(msg.data);
             if (!comps)
                 return;
-            AppDispatcher.fire('global.atcp', comps[1], comps[2]);
+            AppDispatcher.fire('atcp', comps[1], comps[2]);
+        });
+
+        source.addEventListener('mxp', function(msg) {
+            AppDispatcher.fire('mxp', msg.data);
         });
 
         source.addEventListener('mxp', function(msg) {
@@ -117,12 +121,12 @@ var Page = React.createClass({
         source.addEventListener('error', function(err) {
             //console.log('EventSource error:', err);
             source.close();
-            AppDispatcher.fire('global.disconnected');
+            AppDispatcher.fire('disconnected');
         }.bind(this), false);
     },
     sendCommand: function(type, data, silent) {
         if (type === 'cmd' && !silent) {
-            AppDispatcher.fire('global.ast', {type: 'echo', text: data});
+            AppDispatcher.fire('ast', {type: 'echo', text: data});
         }
 
         var sessionid = this.state.sessionid;
@@ -163,36 +167,36 @@ var Page = React.createClass({
     },
     onAtcp: function(name, value) {
         if (name === 'Avalon.Prompt') {
-            AppDispatcher.fire('global.ast', { type: 'mxp-open-element', name: 'hr'});
-            AppDispatcher.fire('global.ast', { type: 'flush' });
+            AppDispatcher.fire('ast', { type: 'mxp-open-element', name: 'hr'});
+            AppDispatcher.fire('ast', { type: 'flush' });
         }
     },
     componentDidMount: function() {
         this.setState({parser: this.createParser()});
-        AppDispatcher.on('global.sendUsername', this.sendUsername);
-        AppDispatcher.on('global.sendPassword', this.sendPassword);
-        AppDispatcher.on('global.send', this.sendCommand);
-        AppDispatcher.on('global.disconnected', this.onDisconnect);
-        AppDispatcher.on('global.connected', this.onConnected);
-        AppDispatcher.on('global.atcp', this.onAtcp);
+        AppDispatcher.on('sendUsername', this.sendUsername);
+        AppDispatcher.on('sendPassword', this.sendPassword);
+        AppDispatcher.on('send', this.sendCommand);
+        AppDispatcher.on('disconnected', this.onDisconnect);
+        AppDispatcher.on('connected', this.onConnected);
+        AppDispatcher.on('atcp', this.onAtcp);
 
-        AppDispatcher.on('global.connect', this.connect);
-        AppDispatcher.on('global.disconnect', this.disconnect);
+        AppDispatcher.on('connect', this.connect);
+        AppDispatcher.on('disconnect', this.disconnect);
         AppDispatcher.on('error', this.onError);
 
         this.state.config.plugins.forEach(function(plugin) { Registry.require('plugins.' + plugin); });
     },
     componentWillUnmount: function() {
-        AppDispatcher.off('global.sendUsername', this.sendUsername);
-        AppDispatcher.off('global.sendPassword', this.sendPassword);
-        AppDispatcher.off('global.send', this.sendCommand);
-        AppDispatcher.off('global.disconnected', this.onDisconnect);
-        AppDispatcher.off('global.connected', this.onConnected);
+        AppDispatcher.off('sendUsername', this.sendUsername);
+        AppDispatcher.off('sendPassword', this.sendPassword);
+        AppDispatcher.off('send', this.sendCommand);
+        AppDispatcher.off('disconnected', this.onDisconnect);
+        AppDispatcher.off('connected', this.onConnected);
         AppDispatcher.off('error', this.onError);
-        AppDispatcher.off('global.atcp', this.onAtcp);
+        AppDispatcher.off('atcp', this.onAtcp);
 
-        AppDispatcher.off('global.connect', this.connect);
-        AppDispatcher.off('global.disconnect', this.disconnect);
+        AppDispatcher.off('connect', this.connect);
+        AppDispatcher.off('disconnect', this.disconnect);
     },
     connect: function(user, pwd) {
         if (this.state.connected)
@@ -203,7 +207,7 @@ var Page = React.createClass({
     },
     disconnect: function() {
             this.state.eventSource.close();
-            AppDispatcher.fire('global.disconnected');
+            AppDispatcher.fire('disconnected');
     },
     renderWidget: function(config) {
         if ('string' === typeof config)

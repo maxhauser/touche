@@ -133,7 +133,8 @@ hr {
     opacity: 1;
 }
 
-.widget input {
+.widget input,
+.widget button {
     width: 100%;
     min-height: 1.68rem;
 }

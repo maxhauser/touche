@@ -49,8 +49,10 @@ var cns = [{
 	children: ['LoginPanel', 'Mapper', 'GoTo', 'VersionDisplay']
 }];
 
-if (/[\?&]dev=true/.test(location.href)) {
+if (/[!&]dev=true/.test(location.href)) {
+	require('./widgets/Dropbox');
 	cns[1].children.push('CastPanel');
+	cns[2].children.splice(-1,0,'Dropbox');
 }
 
 var config = {

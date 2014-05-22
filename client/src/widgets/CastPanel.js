@@ -65,6 +65,22 @@ var spells = {
         stop: 'z stop daemonenhaut',
         start: /Du bist nun vollkommen in eine Daemonenhaut eingehuellt\./,
         end: /Deine Daemonenhaut loest sich auf\./
+    },
+    windhaut: {
+        name: 'windhaut',
+        caption: 'Windhaut',
+        run: 'zz windhaut',
+        stop: 'z stop windhaut',
+        start: /Du bist nun vollkommen in eine Windhaut eingehuellt\./,
+        end: /Deine Windhaut loest sich auf\./
+    },
+    feueraura: {
+        name: 'feueraura',
+        caption: 'Feueraura',
+        run: 'zz feueraura',
+        stop: 'z stop feueraura',
+        start: /Du senkst Deine Haende, aber der Schutz der Manawolken umgibt Dich/,
+        end: /Deine Feueraura loest sich auf\./
     }
     /*
     , manarausch: {
@@ -110,10 +126,10 @@ var CastPanel = React.createClass({
         }, this);
     },
     stopSpell: function(spell) {
-        AppDispatcher.fire('global.send', 'cmd', spell.stop);
+        AppDispatcher.fire('send', 'cmd', spell.stop);
     },
     runSpell: function(spell) {
-        AppDispatcher.fire('global.send', 'cmd', spell.run);
+        AppDispatcher.fire('send', 'cmd', spell.run);
     },
     onTick: function() {
         var spells = this.state.spells;
@@ -133,11 +149,11 @@ var CastPanel = React.createClass({
         this.setState({spells: spells});
     },
     componentWillMount: function() {
-        AppDispatcher.on('global.textline', this.onText);
+        AppDispatcher.on('textline', this.onText);
         setInterval(this.onTick, 1000);
     },
     componentWillUnmount: function() {
-        AppDispatcher.un('global.textline', this.onText);
+        AppDispatcher.un('textline', this.onText);
         clearInterval(this.onTick);
     },
     onPerpetualClick: function(spell) {

@@ -40,12 +40,16 @@ hr {
     padding: 10px 10px 0 10px;
 }
 
+
 .widget-body {
-    padding: 5px 5px 0 5px;
+    padding: 5px;
+    /*padding: 5px 5px 0 5px;*/
     min-height: 30px;
 }
 
-.widget input {
+.widget input,
+.widget button
+ {
     width: 100%;
     min-height: 1.68rem;
 }

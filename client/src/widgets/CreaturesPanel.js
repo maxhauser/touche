@@ -17,14 +17,14 @@ var CreaturesPanel = React.createClass({
 		return <Widget caption="NPCs" emptytext="Niemand da">{_.map(this.state.creatures, renderCreature)}</Widget>;
 	},
 	componentDidMount: function() {
-		AppDispatcher.on('global.ast', this.onEmit);
-		AppDispatcher.on('global.mxp', this.onMxp);
-		AppDispatcher.on('global.atcp', this.onAtcp);
+		AppDispatcher.on('ast', this.onEmit);
+		AppDispatcher.on('mxp', this.onMxp);
+		AppDispatcher.on('atcp', this.onAtcp);
 	},
 	componentWillUnmount: function() {
-		AppDispatcher.off('global.ast', this.onEmit);
-		AppDispatcher.off('global.mxp', this.onMxp);
-		AppDispatcher.off('global.atcp', this.onAtcp);
+		AppDispatcher.off('ast', this.onEmit);
+		AppDispatcher.off('mxp', this.onMxp);
+		AppDispatcher.off('atcp', this.onAtcp);
 	},
 	onAtcp: function(name, value) {
 		if (name === 'Avalon.Getoetet') {

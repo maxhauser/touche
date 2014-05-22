@@ -2,10 +2,10 @@ var AppDispatcher = require('./AppDispatcher');
 var _ = require('lodash');
 var AppState = require('./appstate');
 
-AppDispatcher.on('global.atcp', onAtcp);
-AppDispatcher.on('global.connected', onConnected);
-AppDispatcher.on('global.disconnected', onDisconnected);
-AppDispatcher.on("global.ast", onBatchComplete);
+AppDispatcher.on('atcp', onAtcp);
+AppDispatcher.on('connected', onConnected);
+AppDispatcher.on('disconnected', onDisconnected);
+AppDispatcher.on('ast', onBatchComplete);
 
 var statekey = 'map';
 var rooms = AppState.get(statekey) || {};
@@ -30,7 +30,7 @@ function updateCurrentRoom(data) {
 }
 
 function onConnected() {
-	AppDispatcher.fire("global.send", "atcp", "ava_set_mapper 1");
+	AppDispatcher.fire('send', "atcp", "ava_set_mapper 1");
 }
 
 function onDisconnected() {

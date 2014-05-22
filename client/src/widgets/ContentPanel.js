@@ -14,6 +14,8 @@ var Parser = require('../parser');
 var TelnetParser = require('../telnetparser');
 var MxpParser = Component.define(Parser, TelnetParser);
 
+var StringUtils = require('../StringUtils');
+
 function get(el, contextel, className) {
 	while(el && el !== document.documentElement && el !== contextel) {
 		if (el.classList.contains(className))
@@ -89,7 +91,7 @@ var Content = React.createClass({
         var last = this.state.lastSize;
         if (force || height !== last.height || width !== last.width) {
             this.setState({lastSize: {width: width, height:height}});
-            AppDispatcher.fire('global.send', 'naws', width + "," + height);
+            AppDispatcher.fire('send', 'naws', width + "," + height);
         }
     },
 	getRenderNode: function(){
@@ -103,15 +105,15 @@ var Content = React.createClass({
 			this.handleMxpSend(options, e, target);
 		} else {
 			e.stopPropagation();
-			AppDispatcher.fire('global.inputExpected');
+			AppDispatcher.fire('inputExpected');
 		}
 	},
 	handleMxpSend: function(options, e, target) {
 		var cmd = options[0] || '';
 		var pos = cmd.indexOf('|');
 		if (pos === -1) {
-			AppDispatcher.fire('global.send', 'cmd', cmd, /^!/.test(cmd)); //
-			AppDispatcher.fire('global.inputExpected');
+			AppDispatcher.fire('send', 'cmd', cmd, /^!/.test(cmd)); //
+			AppDispatcher.fire('inputExpected');
 			return;
 		}
 
@@ -126,8 +128,8 @@ var Content = React.createClass({
 			React.unmountComponentAtNode(menuel);
 			menuel.parentElement.removeChild(menuel);
 			if (item)
-				AppDispatcher.fire('global.send', 'cmd', item.command, /^!/.test(item.command)); //
-			AppDispatcher.fire('global.inputExpected');
+				AppDispatcher.fire('send', 'cmd', item.command, /^!/.test(item.command)); //
+			AppDispatcher.fire('inputExpected');
 		};
 		var up = (target.offsetTop - e.currentTarget.scrollTop) / e.currentTarget.clientHeight > 0.5;
 		target.appendChild(menuel);
@@ -161,17 +163,17 @@ var Content = React.createClass({
 		this.setState({afterinput: true});
 	},
 	componentDidMount: function() {
-		AppDispatcher.on('global.ast', this.emit);
-		AppDispatcher.on('global.atcp', this.onAtcp);
-        AppDispatcher.on('global.connected', this.forceSendSize);
-        AppDispatcher.on('global.send', this.onSend);
+		AppDispatcher.on('ast', this.emit);
+		AppDispatcher.on('atcp', this.onAtcp);
+        AppDispatcher.on('connected', this.forceSendSize);
+        AppDispatcher.on('send', this.onSend);
         window.addEventListener('resize', this.sendSize);
 	},
 	componentWillUnmount: function() {
-		AppDispatcher.off('global.ast', this.emit);
-		AppDispatcher.off('global.atcp', this.onAtcp);
-        AppDispatcher.off('global.connected', this.forceSendSize);
-        AppDispatcher.off('global.send', this.onSend);
+		AppDispatcher.off('ast', this.emit);
+		AppDispatcher.off('atcp', this.onAtcp);
+        AppDispatcher.off('connected', this.forceSendSize);
+        AppDispatcher.off('send', this.onSend);
         window.removeEventListener('resize', this.sendSize);
 	},
 	invertColors: function() {
@@ -197,15 +199,21 @@ var Content = React.createClass({
 		if (ast.type === 'flush')
 			return this.batchComplete();
 
-		var name;
+		var name, text;
 		switch (ast.type) {
 			case 'text':
 				if ((ast.text === kletterfail || ast.text === schwimmfail) && CurrentExits.lastmove) {
 					var move = CurrentExits.lastmove;
 					delete CurrentExits.lastmove;
-					AppDispatcher.fire('global.send', 'cmd', move);
+					AppDispatcher.fire('send', 'cmd', move);
 				} else if (!this.silent) {
-					this.emitText(ast.text);
+
+					text = StringUtils.splitLine(ast.text, 95);
+					text.split('\n').forEach(function(line, ix) {
+						if (ix !== 0)
+							this.newLine();
+						this.emitText(line);
+					}, this);
 					this.setState({line: this.state.line + ast.text});
 				}
 
@@ -214,8 +222,11 @@ var Content = React.createClass({
 			case 'echo':
 				if (ast.text === '' && (!this.lineel || !this.lineel.hasChildNodes))
 					return;
-				this.emitText(ast.text, 'echo');
-				this.newLine();
+				text = StringUtils.splitLine(ast.text, 75);
+				text.split('\n').forEach(function(line) {
+					this.emitText(line, 'echo');
+					this.newLine();
+				}, this);
 				this.batchComplete();
 				break;
 
@@ -223,7 +234,7 @@ var Content = React.createClass({
 				delete this.getStyles().marginLeft;
 				this.newLine();
 				if (this.state.line) {
-					AppDispatcher.fire('global.textline', this.state.line);
+					AppDispatcher.fire('textline', this.state.line);
 					this.setState({line: ''});
 				}
 				break;
@@ -319,9 +330,9 @@ var Content = React.createClass({
 		}
 
 		if (name === 'support') {
-			AppDispatcher.fire('global.send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR>', true);
+			AppDispatcher.fire('send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR>', true);
 		} else if (name === 'version') {
-			AppDispatcher.fire('global.send', 'cmd', '\x1b[1z<VERSION MXP=1.2>', true);
+			AppDispatcher.fire('send', 'cmd', '\x1b[1z<VERSION MXP=1.2>', true);
 		} else if (name === 'a') {
 			el = document.createElement('a');
 			a = mxp.attribsToObject(ast.attribs);
@@ -350,9 +361,9 @@ var Content = React.createClass({
 			el = document.createElement('hr');
 			this.openTag(name, el, true);
 		} else if (name === 'username') {
-			AppDispatcher.fire('global.sendUsername');
+			AppDispatcher.fire('sendUsername');
 		} else if (name === 'password') {
-			AppDispatcher.fire('global.sendPassword');
+			AppDispatcher.fire('sendPassword');
 		} else if (name === 'expire') {
 			if (ast.attribs[0] === 'ROOM') {
 				_.keys(CurrentExits.exits).forEach(function(key) {

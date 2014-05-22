@@ -4,11 +4,11 @@ var Dispatcher = require('./AppDispatcher');
 var store = {};
 var connected = false;
 
-Dispatcher.on('global.connected', function() {
+Dispatcher.on('connected', function() {
 	connected = true;
 	store = {};
 });
-Dispatcher.on('global.disconnected', function() { connected = false; });
+Dispatcher.on('disconnected', function() { connected = false; });
 
 var Session = {
 	isConnected: function() {

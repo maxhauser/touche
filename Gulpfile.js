@@ -14,9 +14,8 @@ var target = path.join(__dirname, 'dist');
 var source = path.join(__dirname, 'client');
 
 gulp.task('copy', ['clean'], function() {
-    return gulp.src(source + '/html/userform.html')
+    return gulp.src(source + '/html/favicon.ico')
         .pipe(gulp.dest(target));
-
 });
 
 gulp.task('clean', function() {

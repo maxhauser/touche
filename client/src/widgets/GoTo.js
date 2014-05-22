@@ -22,7 +22,7 @@ var finder = new Pathfinder({
 var Suggestion = React.createClass({
 	onClick: function() {
 		Api.map.walkTo(this.props.room.id);
-		env.fire('global.inputExpected');
+		env.fire('inputExpected');
 	},
 	render: function() {
 		return (<li className="goto-suggestion">
@@ -54,7 +54,10 @@ var GoToPanel = React.createClass({
 		var distanceMap = this.state.distanceMap;
 
 		if (!distanceMap) {
-			distanceMap = finder.getDistanceMap(RoomDb.current().id);
+			var current = RoomDb.current();
+			if (!current)
+				return {};
+			distanceMap = finder.getDistanceMap(current.id);
 			this.setState({distanceMap: distanceMap});
 		}
 

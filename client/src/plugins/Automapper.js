@@ -44,7 +44,7 @@ Api.automap = function(on, dup) {
 
 Api.automapper = Api.automap;
 
-env.on('global.send', function(type, text) {
+env.on('send', function(type, text) {
 	if (type !== 'cmd')
 		return;
 	lastdirection = directions[text.trim().toLowerCase()];
