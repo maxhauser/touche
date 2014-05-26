@@ -31,20 +31,24 @@ Registry.define('plugins.automapper', function() {
 });
 
 var cns = [{
+	key: 'column1',
 	direction: 'vertical',
 	style: {
 		width: '100%',
 		height: '100%'
 	},
 	children: [{
+		key: 'main-content',
 		widget: 'ContentPanel',
 		mainContent: true,
 		/*style: {'line-height': 10, 'font-size': 10}*/
 	}, 'CommandInput']
 }, {
+	key: 'column2',
 	direction: 'vertical',
 	children: ['StatusPanel', 'Compass']
 }, {
+	key: 'column3',
 	direction: 'vertical',
 	children: ['LoginPanel', 'Mapper', 'GoTo', 'VersionDisplay']
 }];
@@ -58,6 +62,7 @@ if (/[!&]dev=true/.test(location.href)) {
 var config = {
 	plugins: ['scripting', 'automapper'],
 	ui: {
+		key: 'main',
 		style: {
 			width: '100%',
 			height: '100%'

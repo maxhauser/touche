@@ -53,7 +53,7 @@ gulp.task('webpack', ['clean'], function(cb) {
         resolve: {
             modulesDirectories: ['bower_components', 'node_modules'],
             alias: {
-                'react$': 'react/react-with-addons.js',
+                //'react$': 'react/react-with-addons.js',
                 'lodash$': 'lodash/dist/lodash.js'
             }
         },

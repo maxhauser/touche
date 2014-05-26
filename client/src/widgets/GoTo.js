@@ -20,9 +20,9 @@ var finder = new Pathfinder({
 });
 
 var Suggestion = React.createClass({
-	onClick: function() {
-		Api.map.walkTo(this.props.room.id);
-		env.fire('inputExpected');
+	onClick: function(event) {
+		if (this.props.onClick)
+			this.props.onClick(event);
 	},
 	render: function() {
 		return (<li className="goto-suggestion">
@@ -39,9 +39,35 @@ var GoToPanel = React.createClass({
 	},
 	componentDidMount: function() {
 		env.on('room.changed', this.onRoomChange);
+		window.addEventListener('keydown', this.handleGlobalKeyDown);
 	},
 	componentWillUnmount: function() {
 		env.off('room.changed', this.onRoomChange);
+		window.removeEventListener('keydown', this.handleGlobalKeyDown);
+	},
+	handleGlobalKeyDown: function(event) {
+		if (event.ctrlKey && event.keyCode === 71) { // ctrl-g
+			event.preventDefault();
+			this.refs.input.getDOMNode().focus();
+		}
+	},
+	walkTo: function(roomId) {
+		this.setState({value: ''});
+		Api.map.walkTo(roomId);
+		env.fire('inputExpected');
+	},
+	handleClick: function(suggestion) {
+		this.walkTo(suggestion.room.id);
+	},
+	handleKeyDown: function(event) {
+		if (event.keyCode === 13 && this.state.suggestions.length > 0) {
+			event.preventDefault();
+			this.walkTo(this.state.suggestions[0].room.id);
+		} else if (event.keyCode === 27) {
+			event.preventDefault();
+			this.setState({value: ''});
+			env.fire('inputExpected');
+		}
 	},
 	onRoomChange: function() {
 		this.setState({value: ''});
@@ -79,7 +105,7 @@ var GoToPanel = React.createClass({
 		this.setState({suggestions: _.first(suggestions.sort(function(a,b){return (a.distance - b.distance);}), 8)});
 	},
 	renderSuggestion: function(suggestion) {
-		return <Suggestion distance={suggestion.distance} room={suggestion.room}/>;
+		return <Suggestion distance={suggestion.distance} room={suggestion.room} onClick={this.handleClick.bind(this, suggestion)}/>;
 	},
 	renderList: function() {
 		return (<ul className="goto-suggestion-list">
@@ -89,8 +115,10 @@ var GoToPanel = React.createClass({
 	render: function() {
 		return (
 			<Widget caption="Gehe zu">
-				<input type="text" className="topcoat-text-input--large" placeholder="Ortssuche"
-					disabled={this.state.enabled?"":"disabled"} value={this.state.value} onChange={this.handleChange}/>
+				<input ref="input"
+					type="text" className="topcoat-text-input--large" placeholder="Ortssuche"
+					disabled={this.state.enabled?"":"disabled"} value={this.state.value} onChange={this.handleChange}
+					onKeyDown={this.handleKeyDown}/>
 				{this.state.suggestions.length === 0?React.DOM.span({className:'goto-no-suggestions'},"Keine Vorschläge"):this.renderList()}
 			</Widget>
 		);

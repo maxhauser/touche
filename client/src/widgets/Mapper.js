@@ -122,7 +122,8 @@ var Mapper = React.createClass({
 			push.apply(queue, _.map(exits, function(id, dir) {
 				return { coords: c, sourceid: room.id, targetid: id, dir: dir};
 			}));
-			els.unshift(this.renderRoom(room, c));
+			if (this.isInBounds(c))
+				els.unshift(this.renderRoom(room, c));
 		}.bind(this);
 
 		addroom(room, [0,0]);
@@ -135,23 +136,29 @@ var Mapper = React.createClass({
 			var targetkey = c[0] + ',' + c[1];
 			var elkey = curr.sourceid + ';' + curr.dir;
 			if (coords[targetkey] && coords[targetkey] !== curr.targetid) {
-				els.unshift(this.renderShadowExit(elkey, curr.coords, d));
+				if (this.isInBounds(curr.coords))
+					els.unshift(this.renderShadowExit(elkey, curr.coords, d));
 				continue;
 			}
 			var target = RoomDb.get(curr.targetid);
 			if (!target) {
-				els.unshift(this.renderHalfExit(elkey, curr.coords, d));
+				if (this.isInBounds(curr.coords))
+					els.unshift(this.renderHalfExit(elkey, curr.coords, d));
 				continue;
 			}
 			var key = curr.coords[0] + ',' + curr.coords[1];
 			if (!joins[key + ':' + targetkey]) {
 				joins[targetkey + ':' + key] = true;
 				addroom(target, c);
-				els.unshift(this.renderExit(elkey, curr.coords, d));
+				if (this.isInBounds(curr.coords))
+					els.unshift(this.renderExit(elkey, curr.coords, d));
 			}
 		}
 
 		return els;
+	},
+	isInBounds: function(c) {
+		return c[0] > -5 && c[0] < 5 && c[1] > -5 && c[1] < 5;
 	},
 	renderShadowExit: function(key, coords, d) {
 		var fieldSize = this.props.fieldSize;

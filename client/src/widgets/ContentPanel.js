@@ -51,9 +51,12 @@ var Content = React.createClass({
 		return this.transferPropsTo(<div className="content-wrap">
 			<div className="content-scroll">
 				<div className="content-overlay"/>
-				<div ref="content" aria-role="log" aria-live="polite" aria-busy={this.state.afterinput?"true":"false"} className="content" onClick={this.onClick}/>
+				<div ref="content" aria-role="log" aria-live="polite" className="content" onClick={this.onClick}/>
 			</div>
 		</div>);
+	},
+	shouldComponentUpdate: function(nextProps, nextState) {
+		return false;
 	},
 	testCharSize: function() {
 		var row = document.createElement('div');

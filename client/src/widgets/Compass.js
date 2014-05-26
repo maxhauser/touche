@@ -95,21 +95,21 @@ var Compass = React.createClass({
 			'<feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
 			'</filter>';
 		if (this.state.connected || !env.lightUI) {
-			els = [<Pointer text="NO" rotate={45} scale={0.8} cmd={exits.nordosten}/>,
-					<Pointer text="SO" rotate={135} scale={0.8} cmd={exits.suedosten}/>,
-					<Pointer text="SW" rotate={225} scale={0.8} cmd={exits.suedwesten}/>,
-					<Pointer text="NW" rotate={315} scale={0.8} cmd={exits.nordwesten}/>,
+			els = [<Pointer key="no" text="NO" rotate={45} scale={0.8} cmd={exits.nordosten}/>,
+					<Pointer key="so" text="SO" rotate={135} scale={0.8} cmd={exits.suedosten}/>,
+					<Pointer key="sw" text="SW" rotate={225} scale={0.8} cmd={exits.suedwesten}/>,
+					<Pointer key="nw" text="NW" rotate={315} scale={0.8} cmd={exits.nordwesten}/>,
 
-					<Pointer text="N" rotate={0} cmd={exits.norden}/>,
-					<Pointer text="O" rotate={90} cmd={exits.osten}/>,
-					<Pointer text="S" rotate={180} cmd={exits.sueden}/>,
-					<Pointer text="W" rotate={270} cmd={exits.westen}/>];
+					<Pointer key="n" text="N" rotate={0} cmd={exits.norden}/>,
+					<Pointer key="o" text="O" rotate={90} cmd={exits.osten}/>,
+					<Pointer key="s" text="S" rotate={180} cmd={exits.sueden}/>,
+					<Pointer key="w" text="W" rotate={270} cmd={exits.westen}/>];
 			if (exits.hoch)
-				els.push(<Icon x={-80} y={-80} text={arrowUp} cmd={exits.hoch}/>);
+				els.push(<Icon key="up" x={-80} y={-80} text={arrowUp} cmd={exits.hoch}/>);
 			if (exits.runter)
-				els.push(<Icon x={-80} y={80} text={arrowDown} cmd={exits.runter}/>);
+				els.push(<Icon key="down" x={-80} y={80} text={arrowDown} cmd={exits.runter}/>);
 			if (exits.raus)
-				els.push(<Icon x={80} y={80} text={exit} cmd={exits.raus}/>);
+				els.push(<Icon key="raus" x={80} y={80} text={exit} cmd={exits.raus}/>);
 			els = (<svg width={180} height={180}>
 			<g dangerouslySetInnerHTML={{__html:filter}}/>
 			<g transform="translate(100,100) scale(0.8)">

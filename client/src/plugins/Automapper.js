@@ -3,8 +3,8 @@ var roomdb = require('../roomdb');
 var Api = require('../Api');
 var Alertify = require('../alertify');
 
-var lastroomid;
-var lastdirection;
+var lastroomid, lastdirection;
+
 var directions = {
 	'n':'n', 'nord':'n', 'norden':'n',
 	'no':'no', 'nordost':'no', 'nordosten':'no', 'ne':'no',
@@ -30,7 +30,7 @@ var opposite = {
 	'r':'h'
 };
 var mapper = false;
-var duplex = false;
+var duplex = true;
 
 Api.automap = function(on, dup) {
 	mapper = !!on;
@@ -47,7 +47,10 @@ Api.automapper = Api.automap;
 env.on('send', function(type, text) {
 	if (type !== 'cmd')
 		return;
-	lastdirection = directions[text.trim().toLowerCase()];
+	var dir = text.trim().toLowerCase();
+	lastdirection = directions[dir];
+	if (!lastdirection)
+		lastdirection = dir;
 });
 
 env.on('room.changed', function() {
@@ -69,5 +72,6 @@ env.on('room.changed', function() {
 			env.fire('room.updated');
 		}
 	}
+	lastdirection = null;
 	lastroomid = currentId;
 });

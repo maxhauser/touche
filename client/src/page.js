@@ -14,6 +14,8 @@ var Mapper = require('./widgets/Mapper');
 var Panel = require('./widgets/Panel');
 var Alertify = require('./alertify');
 
+//window.ReactDefaultPerf = require('react/lib/ReactDefaultPerf');
+
 var env = require('./Environment');
 
 require('./eventsource');
@@ -68,6 +70,9 @@ var Page = React.createClass({
             config: getConfig()
         };
     },
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return false;
+    },
     createParser: function() {
         var me = this;
         var trie = this.state.trie;
@@ -112,10 +117,6 @@ var Page = React.createClass({
 
         source.addEventListener('mxp', function(msg) {
             AppDispatcher.fire('mxp', msg.data);
-        });
-
-        source.addEventListener('mxp', function(msg) {
-            AppDispatcher.fire('global.mxp', msg.data);
         });
 
         source.addEventListener('error', function(err) {
@@ -210,22 +211,30 @@ var Page = React.createClass({
             AppDispatcher.fire('disconnected');
     },
     renderWidget: function(config) {
-        if ('string' === typeof config)
-            return Registry.require('widget.' + config)();
-
-        var name = config.widget || 'Panel';
-        var widget = Registry.require('widget.' + name);
-
-        var children = (config.children || []).map(this.renderWidget);
+        var content, name;
         var attribs = {};
-        _.forEach(config, function(value, key) {
-            if (key !== 'widget' && key !== 'children')
-                attribs[key] = value;
-        });
 
-        return widget(attribs, children);
+        if ('string' === typeof config) {
+            name = config;
+        } else {
+            name = config.widget || 'Panel';
+            content = (config.children || []).map(this.renderWidget, this);
+            _.forEach(config, function(value, key) {
+                if (key !== 'widget' && key !== 'children')
+                    attribs[key] = value;
+            });
+        }
+
+        if (!attribs.key) {
+            this.ids[name] = (this.ids[name] || 0) + 1;
+            attribs.key = name + this.ids[name];
+        }
+
+        var widget = Registry.require('widget.' + name);
+        return widget(attribs, content);
     },
     render: function() {
+        this.ids = {};
         var uiconfig = _.clone(this.state.config.ui);
         uiconfig.className = (uiconfig.className || '') + ' ' + (this.state.connected?'connected':'disconnected');
         return this.renderWidget(uiconfig);

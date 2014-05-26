@@ -133,8 +133,9 @@ var RoomDb = {
 		delete rooms[roomId];
 		_.each(rooms, function(room) {
 			_.each(room.exits, function(exit, key) {
-				if (exit === roomId || exit.room === roomId)
+				if (exit === roomId || exit.room === roomId) {
 					delete room.exits[key];
+				}
 			});
 		});
 		if (roomId === currentRoomId) {
