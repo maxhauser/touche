@@ -32,7 +32,7 @@ var opposite = {
 var mapper = false;
 var duplex = true;
 
-Api.automap = function(on, dup) {
+Api.fn.automapper = function(on, dup) {
 	mapper = !!on;
 	duplex = !!dup;
 
@@ -41,8 +41,6 @@ Api.automap = function(on, dup) {
 	else
 		Alertify.log('Automapper ist deaktiviert.');
 };
-
-Api.automapper = Api.automap;
 
 env.on('send', function(type, text) {
 	if (type !== 'cmd')

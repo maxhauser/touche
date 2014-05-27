@@ -5,13 +5,57 @@ var roomdb = require('./roomdb');
 var Pathfinder = require('./Pathfinder');
 var Alertify = require('./alertify');
 
-var tickers = {};
-var actions = {};
-var aliases = {};
-var delays = {};
-var macros = {};
-var gags = {};
-var substitutes = {};
+var ApiClass = function(name, parent) {
+	this.name = name;
+	if (Object.defineProperty)
+		Object.defineProperty(this, 'parent', { value: parent, enumerable: false });	
+	else
+		this.parent = parent;
+	this.classes = {};
+	this.state = {};
+};
+
+ApiClass.prototype.fn = ApiClass.prototype;
+
+var Api = new ApiClass('global');
+
+_.assign(Api.fn, {
+	cls: function(name) {
+		var cls = this.classes[name];
+		if (!cls) {
+			cls = new ApiClass(name, this);
+			this.classes[name] = cls;
+		}
+		return cls;
+	},
+
+	destroy: function() {
+		this.state = {};
+
+		if (!this.parent)
+			return;
+
+		delete this.parent.classes[this.name];
+	},
+
+	enable: function() {
+		this.disabled = false;
+	},
+
+	disable: function() {
+		this.disabled = true;
+	},
+
+	each: function(name, fn) {
+		if (this.disabled)
+			return;
+
+		_.each(this.state[name], fn);
+		_.each(this.classes, function(cls) {
+			cls.each(name, fn);
+		});
+	}
+});
 
 function getText(line) {
 	var text = "";
@@ -21,27 +65,32 @@ function getText(line) {
 	});
 	return text;
 }
-var Api;
 
 var mych = env.linePipeline.add();
 mych.receive(function(line) {
 	var text = getText(line);
 
-	if (_.any(gags, function(gag) { return gag.test(text); })) {
+	var gag = false;
+	Api.each('gags', function(gag) {
+		if (gag.test(text))
+			gag = true;
+	});
+
+	if (gag) {
 		console.log('GAGGED', text);
 		return;
 	}
 
 	mych.send(line);
 
-	_.forEach(actions, function(action) {
+	Api.each('actions', function(action) {
 		var match = action.regex.exec(text);
 		if (match)
 			action.handler.apply(undefined, match);
 	});
 });
 
-Api = {
+_.assign(Api.fn, {
 	env: env,
 	on: function(eventName, handler) {
 		Dispatcher.on(eventName, handler);
@@ -63,6 +112,7 @@ Api = {
 	},
 	ticker: function(name, seconds, handler) {
 		var interval = window.setInterval(handler, seconds * 1000);
+		var tickers = this.state.tickers || (this.state.tickers = {});
 		var ticker = tickers[name];
 		if (ticker) {
 			window.clearInterval(ticker);
@@ -70,6 +120,7 @@ Api = {
 		tickers[name] = interval;
 	},
 	unticker: function(name) {
+		var tickers = this.state.tickers || (this.state.tickers = {});
 		var ticker = tickers[name];
 		if (ticker) {
 			delete tickers[name];
@@ -77,19 +128,24 @@ Api = {
 		}
 	},
 	action: function(search, commands, priority) {
+		var actions = this.state.actions || (this.state.actions = {});
 		var re = (search instanceof RegExp)?search:new RegExp(search, 'i');
 		actions[search.source||search] = { handler: commands, priority: priority, regex: re };
 	},
 	unaction: function(search){
+		var actions = this.state.actions || (this.state.actions = {});
 		delete actions[search.source||search];
 	},
+	/*
 	alias: function(name, command) {
 		aliases[name] = command;
 	},
 	unalias: function(name) {
 		delete aliases[name];
 	},
+	*/
 	delay: function(name, seconds, handler) {
+		var delays = this.state.delays || (this.state.delays = {});
 		if ('function' === typeof seconds) {
 			handler = seconds;
 			seconds = name;
@@ -105,30 +161,37 @@ Api = {
 		}
 	},
 	undelay: function(name) {
+		var delays = this.state.delays || (this.state.delays = {});
 		var delay = delays[name];
 		if (delay) {
 			delete delays[name];
 			window.clearTimeout(delay);
 		}
 	},
+	/*
 	macro: function(keysequence, commands) {
 		macros[keysequence] = commands;
 	},
 	unmacro: function(keysequence) {
 		delete macros[keysequence];
 	},
+	*/
 	gag: function(search) {
+		var gags = this.state.gags || (this.state.gags = {});
 		gags[search] = new RegExp(search);
 	},
 	ungag: function(search) {
+		var gags = this.state.gags || (this.state.gags = {});
 		delete gags[search];
 	},
+	/*
 	substitute: function(text, newtext) {
 		substitutes[text] = newtext;
 	},
 	unsubstitute: function(text) {
 		delete substitutes[text];
 	},
+	*/
 	map: {
 		setIcon: function(icon) {
 			roomdb.current().icon = icon;
@@ -175,7 +238,7 @@ Api = {
 			roomdb.remove(roomdb.current().id);
 		}
 	}
-};
+});
 
 function dothewalk(path) {
 	var current = roomdb.current();
@@ -214,6 +277,7 @@ function notimplemented(name) {
 	};
 }
 
+/*
 [
 	'event',
 	'send',
@@ -231,13 +295,15 @@ function notimplemented(name) {
 	if (!Api[fn])
 		Api[fn] = notimplemented(fn);
 });
+*/
 
 // aliases
-Api.act = Api.action;
-Api.unact = Api.unaction;
-Api.map.walkto = Api.map.walkTo;
-Api.map.seticon = Api.map.setIcon;
-Api.map.pathto = Api.map.pathTo;
+Api.fn.act = Api.action;
+Api.fn.unact = Api.unaction;
+
+Api.fn.walk = Api.fn.map.walkto;
+Api.fn.find = Api.fn.map.find;
+Api.fn.gehe = Api.fn.map.walkto;
 
 Api.walk = Api.map.walkto;
 Api.find = Api.map.find;

@@ -23,18 +23,21 @@ var DropboxPanel = React.createClass({
 		if (connected)
 			_.defer(this.loadStartupScript, this);
 
-		Api.load = this.load;
+		var load = this.load;
+		Api.fn.load = function(file) { load(this, file); };
 
 		return {connected: connected, client: client};
 	},
-	load: function(file) {
+	load: function(api, file) {
 		if (file.indexOf('.') === -1)
 			file += '.coffee';
+		var name = file.replace(/\.coffee$/,'');
 		this.state.client.readFile(file, {httpCache: false}, function(error, content, stats, range) {
 			if(error) {
 				Alertify.error('Error loading "' + file  + '": ' + error);
 			} else {
-				Api.exec(content, file);
+				api.cls(name).destroy();
+				api.cls(name).exec(content, file);
 				Alertify.log('Loaded ' + file);
 			}
 		});
@@ -42,7 +45,8 @@ var DropboxPanel = React.createClass({
 	loadStartupScript: function() {
 		this.state.client.readFile("autoexec.coffee", {httpCache: false}, function(error, content, stats, range) {
 			if(!error) {
-				Api.exec(content, 'autoexec.coffee');
+				Api.cls('autoexec').destroy();
+				Api.cls('autoexec').exec(content, 'autoexec.coffee');
 				Alertify.log('Loaded autoexec.coffee.');
 			}
 		});

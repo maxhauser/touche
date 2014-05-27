@@ -35,7 +35,7 @@ function execCoffee(context, code, name) {
     /* jshint ignore:end */
 }
 
-Api.exec = execCoffee.bind(null, Api);
+Api.fn.exec = function(code, name) { execCoffee(this, code, name); };
 
 var ch = env.commandPipeline.add();
 
