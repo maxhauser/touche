@@ -71,7 +71,7 @@ var Page = React.createClass({
         };
     },
     shouldComponentUpdate: function(nextProps, nextState) {
-        return false;
+        return this.state.connected !== nextState.connected;
     },
     createParser: function() {
         var me = this;

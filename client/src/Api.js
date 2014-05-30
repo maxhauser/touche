@@ -305,10 +305,6 @@ Api.fn.walk = Api.fn.map.walkto;
 Api.fn.find = Api.fn.map.find;
 Api.fn.gehe = Api.fn.map.walkto;
 
-Api.walk = Api.map.walkto;
-Api.find = Api.map.find;
-Api.gehe = Api.map.walkto;
-
 // trigger
 
 // action (search -> command)
