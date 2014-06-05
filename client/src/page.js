@@ -59,7 +59,7 @@ function sendRequest() {
     request.send(d.data);
     request.onreadystatechange = function() {
         if (request.readyState === 4 && requestqueue.length !== 0)
-            window.setTimeout(sendRequest, 10);
+            window.setTimeout(sendRequest, 50);
     };
 }
 

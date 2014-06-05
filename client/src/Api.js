@@ -301,9 +301,13 @@ function dothewalk(path) {
 		if (end > path.length - 1)
 			end = path.length - 1;
 
+		//var dirs = [];
 		for (;ix2<end;ix2++) {
 			Dispatcher.fire('send', 'cmd', path[ix2].dir);
+			//Array.prototype.push.apply(dirs, path[ix2].dir.split(';'));
 		}
+		//var cmd = dirs.length === 1?dirs[0]:('tue ' + dirs.join(','));
+		//Dispatcher.fire('send', 'cmd', cmd);
 
 		if (end < path.length - 1)
 			_.delay(tap, env.walkStep * env.walkSpeed);
