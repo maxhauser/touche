@@ -3,6 +3,7 @@
 var React = require('react');
 var Widget = require('./Widget');
 var env = require('../Environment');
+var CurrentExits = require('../currentexits');
 
 var Pointer = React.createClass({
 	handleClick: function() {
@@ -69,6 +70,9 @@ var Compass = React.createClass({
 		while((m = re.exec(value))) {
 			exits[m[2]] = m[1];
 		}
+
+		CurrentExits.exits = exits;
+
 		this.setState({exits:exits, connected: true});
 	},
 	onDisconnected: function() {

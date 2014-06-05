@@ -6,6 +6,7 @@ var env = {
 	packetPatch: 0,
 	splitChar: ';',
 	walkSpeed: 300,
+	walkStep: 1,
 	tokenPipeline: new Pipeline(),
 	linePipeline: new Pipeline(),
 	commandPipeline: new Pipeline(),

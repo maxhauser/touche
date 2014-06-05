@@ -539,6 +539,7 @@ var Content = React.createClass({
 				frag = document.createDocumentFragment();
 				this.fragel = frag;
 			}
+			/*
 			var ct = this.getRenderNode();
 
 			if (this.linecount >= this.props.maxLineCount && ct.firstChild) { // recycle dom elements
@@ -546,10 +547,13 @@ var Content = React.createClass({
 				while(lineel.firstChild)
 					lineel.removeChild(lineel.firstChild);
 			} else {
-				lineel = document.createElement('div');
-				lineel.className = 'row';
-				this.linecount++;
-			}
+				*/
+
+			lineel = document.createElement('div');
+			lineel.className = 'row';
+			this.linecount++;
+
+			//}
 			frag.appendChild(lineel);
 			this.lineel = lineel;
 		}

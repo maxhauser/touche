@@ -66,28 +66,47 @@ function getText(line) {
 	return text;
 }
 
+function stringHandler(api, text) {
+	return function() {
+		api.send(text);
+	};
+}
+
 var mych = env.linePipeline.add();
 mych.receive(function(line) {
+	var swallow = false;
 	var text = getText(line);
-
-	var gag = false;
-	Api.each('gags', function(gag) {
-		if (gag.test(text))
-			gag = true;
-	});
-
-	if (gag) {
-		console.log('GAGGED', text);
-		return;
-	}
-
-	mych.send(line);
 
 	Api.each('actions', function(action) {
 		var match = action.regex.exec(text);
-		if (match)
-			action.handler.apply(undefined, match);
+		if (match) {
+			var result = action.handler.apply(undefined, match, line);
+			if (result === false) {
+				swallow = true;
+			} else if (_.isString(result)) {
+				line = [{type: 'text', text: result}, {type:'newline'}, {type:'flush'}];
+				text = result;
+			} if (_.isArray(result)) {
+				line = result;
+				text = getText(line);
+			}
+		}
 	});
+
+	Api.each('gags', function(gag) {
+		if (gag.test(text))
+			swallow = true;
+	});
+
+	Api.each('substitutions', function(sub) {
+		if (sub.regex.test(text)) {
+			text = text.replace(sub.regex, sub.replacement);
+			line = [{type: 'text', text: text}, {type:'newline'}, {type:'flush'}];
+		}
+	});
+
+	if (!swallow)
+		mych.send(line);
 });
 
 _.assign(Api.fn, {
@@ -130,6 +149,8 @@ _.assign(Api.fn, {
 	action: function(search, commands, priority) {
 		var actions = this.state.actions || (this.state.actions = {});
 		var re = (search instanceof RegExp)?search:new RegExp(search, 'i');
+		if (_.isString(commands))
+			commands = stringHandler(this, commands);
 		actions[search.source||search] = { handler: commands, priority: priority, regex: re };
 	},
 	unaction: function(search){
@@ -184,12 +205,15 @@ _.assign(Api.fn, {
 		var gags = this.state.gags || (this.state.gags = {});
 		delete gags[search];
 	},
-	/*
-	substitute: function(text, newtext) {
-		substitutes[text] = newtext;
+	substitute: function(search, newtext) {
+		var subs = this.state.substitutions || (this.state.substitutions = {});
+		var re = (search instanceof RegExp)?search:new RegExp(search, 'i');
+		subs[search.source||search] = { replacement: newtext, regex: re };
 	},
-	unsubstitute: function(text) {
-		delete substitutes[text];
+	unsubstitute: function(search) {
+		var subs = this.state.substitutions;
+		if (subs)
+			delete subs[search.source||search];
 	},
 	*/
 	map: {
@@ -241,34 +265,61 @@ _.assign(Api.fn, {
 });
 
 function dothewalk(path) {
-	var current = roomdb.current();
-	var cur = path.shift();
-	if (current.id !== cur.room) {
-		Alertify.error('Gehen abgebrochen: falscher Raum.');
-		return;
-	}
 
-	if (path.length === 0) {
-		Alertify.log('Am Ziel angekommen.');
-		return;
-	}
+	var ix = 0;
+	var error = false;
+	var finished = true;
+	var tap;
 
-	var roomChanged, expired;
-	_.delay(function() {
-		if(roomChanged)
-			dothewalk(path);
-		else
-			expired = true;
-	}, env.walkSpeed);
+	var fn = function(currentId) {
+		/*if (currentId === path[ix].room)
+			return;
+		*/
 
-	Dispatcher.on('room.changed', function() {
-		if(expired)
-			dothewalk(path);
-		else
-			roomChanged = true;
-	}, true);
-	
-	Dispatcher.fire('send', 'cmd', cur.dir);
+		ix ++;
+
+		if (currentId !== path[ix].room) {
+			Alertify.error('Gehen abgebrochen: falscher Raum.');
+			error = true;
+			Dispatcher.un('room.id.changed', fn);
+		} else if (ix === path.length - 1) {
+			Alertify.log('Am Ziel angekommen.');
+			finished = true;
+			Dispatcher.un('room.id.changed', fn);
+		}
+
+		if (ix === ix2)
+			tap();
+	};
+
+	var ix2 = 0;
+	var fn2 = function() {
+		if (error)
+			return;
+
+		var end = ix2 + env.walkStep;
+		if (end > path.length - 1)
+			end = path.length - 1;
+
+		for (;ix2<end;ix2++) {
+			Dispatcher.fire('send', 'cmd', path[ix2].dir);
+		}
+
+		if (end < path.length - 1)
+			_.delay(tap, env.walkStep * env.walkSpeed);
+	};
+
+	var tapix = 0;
+	tap = function() {
+		tapix ++;
+		if (tapix === 2) {
+			tapix = 0;
+			fn2();
+		}
+	};
+
+	Dispatcher.on('room.id.changed', fn);
+	fn2();
 }
 
 function notimplemented(name) {
@@ -298,8 +349,11 @@ function notimplemented(name) {
 */
 
 // aliases
-Api.fn.act = Api.action;
-Api.fn.unact = Api.unaction;
+Api.fn.act = Api.fn.action;
+Api.fn.unact = Api.fn.unaction;
+
+Api.fn.sub = Api.substitute;
+Api.fn.unsub = Api.unsubstitute;
 
 Api.fn.walk = Api.fn.map.walkto;
 Api.fn.find = Api.fn.map.find;

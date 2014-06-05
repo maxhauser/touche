@@ -45,7 +45,7 @@ function onBatchComplete(ast) {
 
 	if (currentRoomId && lastRoomId !== currentRoomId) {
 		lastRoomId = currentRoomId;
-		AppDispatcher.fire('room.changed');
+		AppDispatcher.fire('room.changed', currentRoomId);
 	}
 }
 
@@ -55,6 +55,7 @@ function onAtcp(name, value) {
 			var comps = value.split(' ');
 			currentRoomId = comps[0];
 			updateCurrentRoom({ area: comps[1] });
+			AppDispatcher.fire('room.id.changed', currentRoomId);
 			break;
 
 		case "Room.Brief":
