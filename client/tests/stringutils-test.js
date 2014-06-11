@@ -44,5 +44,22 @@ describe('StringUtils', function() {
         	var split = StringUtils.splitLine(text, 15);
         	assert.equal("ab\n123456789012345\n678901234567890\n1234567890", split);
         });
+        it('split many lines', function() {
+            var text = "Oops,\n\n" + 
+"da hat mir anscheinend mein neu eingebauter Umbruch-Algorithums einen Strich durch die Rechnung gemacht ;)\n\n" +
+"Ich habe die Browserweiche eigentlich nur deshalb eingebaut, um Benutzern die mit älteren Browserversionen unterwegst sind den Frust zu ersparen einen nicht oder nur halb funktionierenden Client vorzufinden.\n\n" +
+"Liebe Grüße\nRupert"
+
+            var expected = "Oops,\n\n" +
+"da hat mir anscheinend mein neu eingebauter Umbruch-Algorithums einen\n" +
+"Strich durch die Rechnung gemacht ;)\n\n" +
+"Ich habe die Browserweiche eigentlich nur deshalb eingebaut, um Benutzern\n" +
+"die mit älteren Browserversionen unterwegst sind den Frust zu ersparen\n" +
+"einen nicht oder nur halb funktionierenden Client vorzufinden.\n\n" +
+"Liebe Grüße\nRupert";
+
+            var split = StringUtils.splitLine(text, 75);
+            assert.equal(expected, split);
+        });
     });
 });

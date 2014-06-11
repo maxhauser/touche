@@ -163,7 +163,6 @@ var Content = React.createClass({
 	},
 	onSend: function() {
 		this.scrollToBottom();
-		this.setState({afterinput: true});
 	},
 	componentDidMount: function() {
 		AppDispatcher.on('ast', this.emit);

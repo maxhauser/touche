@@ -12,7 +12,7 @@ function splitLine(text, lineLength) {
     for (var i = 0; i < l; i++, ix++) {
         var c = text[i];
         if (c === '\n' || c === '\r') {
-            start = i + 1;
+            //start = i + 1;
             ix = 0;
             boundary = start;
         }

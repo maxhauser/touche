@@ -12,13 +12,17 @@ if (DEBUG) {
 var browserSupport = [
 	{ browser: 'chrome', version: 32 },
 	{ browser: 'ie', version: 11 },
-	{ browser: 'firefox', version: 25 },
+	{ browser: 'firefox', version: 24 },
 	{ browser: 'safari', version: 7 }
 ];
 
 React.renderComponent(supportedBrowser()?<Page/>:<OldBrowser/>, document.getElementById('page'));
 
 function supportedBrowser() {
+
+	if (/forcebrowser/.test(location.search))
+		return true;
+
 	var b = getBrowser();
 	var browser = b[0].toLowerCase();
 	var version = parseInt(b[1], 10);
