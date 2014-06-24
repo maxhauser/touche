@@ -47,7 +47,7 @@ env.linePipeline.receive(function(line) {
 	});
 });
 
-env.commandPipeline.receive(function(cmd) { Dispatcher.fire('send', cmd.type, cmd.value); });
+env.commandPipeline.receive(function(cmd) { Dispatcher.fire('send', cmd.type, cmd.value, false, true); });
 
 var inch = env.commandPipeline.add();
 inch.receive(function(cmd) {

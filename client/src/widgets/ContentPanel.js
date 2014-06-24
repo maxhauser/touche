@@ -51,7 +51,7 @@ var Content = React.createClass({
 		return this.transferPropsTo(<div className="content-wrap">
 			<div className="content-scroll">
 				<div className="content-overlay"/>
-				<div ref="content" aria-role="log" aria-live="polite" className="content" onClick={this.onClick}/>
+				<article ref="content" aria-role="log" aria-live="polite" className="content" onClick={this.onClick} tabIndex={-1}/>
 			</div>
 		</div>);
 	},
@@ -97,9 +97,6 @@ var Content = React.createClass({
             AppDispatcher.fire('send', 'naws', width + "," + height);
         }
     },
-	getRenderNode: function(){
-		return this.refs.content.getDOMNode();
-	},
 	onClick: function(e) {
 		var target = get(e.target, e.currentTarget, 'mxp-send');
 		if (target) {
@@ -115,7 +112,7 @@ var Content = React.createClass({
 		var cmd = options[0] || '';
 		var pos = cmd.indexOf('|');
 		if (pos === -1) {
-			AppDispatcher.fire('send', 'cmd', cmd, /^!/.test(cmd)); //
+			AppDispatcher.fire('send', 'cmd', cmd, /^!/.test(cmd), true); //
 			AppDispatcher.fire('inputExpected');
 			return;
 		}
@@ -131,7 +128,7 @@ var Content = React.createClass({
 			React.unmountComponentAtNode(menuel);
 			menuel.parentElement.removeChild(menuel);
 			if (item)
-				AppDispatcher.fire('send', 'cmd', item.command, /^!/.test(item.command)); //
+				AppDispatcher.fire('send', 'cmd', item.command, /^!/.test(item.command), true); //
 			AppDispatcher.fire('inputExpected');
 		};
 		var up = (target.offsetTop - e.currentTarget.scrollTop) / e.currentTarget.clientHeight > 0.5;
@@ -161,8 +158,9 @@ var Content = React.createClass({
 		var el = this.getDOMNode();
 		el.classList[value == 1?'add':'remove']('fight');
 	},
-	onSend: function() {
-		this.scrollToBottom();
+	onSend: function(type, text, silent, manual) {
+		if (manual)
+			this.scrollToBottom();
 	},
 	componentDidMount: function() {
 		AppDispatcher.on('ast', this.emit);
@@ -170,6 +168,10 @@ var Content = React.createClass({
         AppDispatcher.on('connected', this.forceSendSize);
         AppDispatcher.on('send', this.onSend);
         window.addEventListener('resize', this.sendSize);
+
+		this.linecount = 0;
+		this.lastline = 0;
+		this.renderNode = this.refs.content.getDOMNode();
 	},
 	componentWillUnmount: function() {
 		AppDispatcher.off('ast', this.emit);
@@ -296,11 +298,14 @@ var Content = React.createClass({
 				break;
 
 			case 'clear-to-end':
-				var node = this.getRenderNode();
+				var node = this.renderNode;
+				if (!node)
+					return;
 				while (node.hasChildNodes()) {
 					node.removeChild(node.lastChild);
 				}
 				this.linecount = 0;
+				this.lastline = 0;
 				break;
 
 			case 'mxp-definition':
@@ -510,21 +515,28 @@ var Content = React.createClass({
 		}
 	},
 	scrollToBottom: function() {
-		var scrollEl = this.getRenderNode();
+		var scrollEl = this.renderNode;
 		if (scrollEl)
 			scrollEl.scrollTop = scrollEl.scrollHeight;
 	},
 	atBottom: function() {
-		var scrollEl = this.getRenderNode();
-		return (scrollEl.scrollTop + scrollEl.clientHeight + 100) >= scrollEl.scrollHeight;
+		var scrollEl = this.renderNode;
+		if (scrollEl)
+			return (scrollEl.scrollTop + scrollEl.clientHeight + 100) >= scrollEl.scrollHeight;
 	},
 	batchComplete: function() {
+		if (this.linecount === this.lastline)
+			return;
+
+		//console.log('insert ' + (this.linecount - this.lastline) + ' lines');
+		this.lastline = this.linecount;
+
 		var frag = this.fragel;
 		this.setState({afterinput: false});
 		if (frag) {
 			var atbottom = this.atBottom();
 			this.fragel = null;
-			this.getRenderNode().appendChild(frag);
+			this.renderNode.appendChild(frag);
 			if (this.props.autoScroll && atbottom)
 				this.scrollToBottom();
 		}

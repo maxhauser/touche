@@ -6,7 +6,7 @@ HOST=ubuntu@avalon.hij.cc
 KEY=~/azure/key.pem
 SCP=scp
 
-SRC=main.go newrelic.go
+SRC=main.go
 
 .PHONY: client clean all run clean clean-client clean-server publish-all publish-server publish-client
 
@@ -16,7 +16,8 @@ run:
 	$(GO) run $(SRC)
 
 bin/avalon: $(SRC)
-	GOOS=linux GOARCH=amd64 $(GO) build -o bin/avalon -tags newrelic $(SRC)
+	#GOOS=linux GOARCH=amd64 $(GO) build -o bin/avalon -tags newrelic $(SRC)
+	GOOS=linux GOARCH=amd64 $(GO) build -o bin/avalon $(SRC)
 
 clean-client:
 	$(RM) -rf dist

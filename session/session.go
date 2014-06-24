@@ -97,9 +97,13 @@ var OptionNames = map[byte]string{
 var telnetdebug = log.New(os.Stdout, "", 0)
 var MaxSessionConnections = 2
 
-var Debugtelnet = false
-var Compression = false
-var SendRemoteIp = false
+var (
+	Debugtelnet   = false
+	Compression   = false
+	SendRemoteIp  = false
+	Insecure      = false
+	ServerAddress = ""
+)
 
 const PingInterval = 5 * time.Second
 
@@ -194,8 +198,6 @@ func openWriter(w http.ResponseWriter, r *http.Request) (net.Conn, writerFlusher
 }
 
 func NewSession(sid string, w http.ResponseWriter, r *http.Request, onClose func()) (*Session, error) {
-	log.Println("starting session.")
-
 	if sid == "" {
 		sid = generateId()
 	}
@@ -210,7 +212,21 @@ func NewSession(sid string, w http.ResponseWriter, r *http.Request, onClose func
 		InsecureSkipVerify: true,
 	}
 
-	conn, err := tls.Dial("tcp4", "avalon.mud.de:7778", &config)
+	var conn net.Conn
+
+	address := ServerAddress
+	if Insecure {
+		if address == "" {
+			address = "avalon.mud.de:7777"
+		}
+		conn, err = net.Dial("tcp4", address)
+	} else {
+		if address == "" {
+			address = "avalon.mud.de:7778"
+		}
+		conn, err = tls.Dial("tcp4", address, &config)
+	}
+
 	if err != nil {
 		errorlog.Println("cannot open connection to avalon:", err)
 		sseConn.Close()
@@ -292,7 +308,6 @@ func NewSession(sid string, w http.ResponseWriter, r *http.Request, onClose func
 			}
 		}
 
-		log.Println("Session end.")
 		if onClose != nil {
 			onClose()
 		}
@@ -309,8 +324,6 @@ func (sess *Session) Attach(w http.ResponseWriter, r *http.Request) error {
 	err = sess.writer.attach(sseConn, writer)
 	if err != nil {
 		sseConn.Close()
-	} else {
-		log.Println("attached session.")
 	}
 
 	return err

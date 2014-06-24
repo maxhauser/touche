@@ -6,7 +6,7 @@ var env = require('../Environment');
 var CommandItem = React.createClass({
 	handleClick: function(event) {
 		event.preventDefault();
-		env.fire('send', 'cmd', this.props.command.cmd);
+		env.fire('send', 'cmd', this.props.command.cmd, false, true);
 		env.fire('inputExpected');
 	},
 	render: function() {

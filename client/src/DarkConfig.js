@@ -30,6 +30,10 @@ Registry.define('plugins.automapper', function() {
 	require('./plugins/Automapper');
 });
 
+Registry.define('plugins.audio', function() {
+	require('./plugins/Audio');
+});
+
 var cns = [{
 	key: 'column1',
 	direction: 'vertical',
@@ -60,7 +64,7 @@ if (/[!&]dev=true/.test(location.href)) {
 }
 
 var config = {
-	plugins: ['scripting', 'automapper'],
+	plugins: ['scripting', 'automapper', 'audio'],
 	ui: {
 		key: 'main',
 		style: {

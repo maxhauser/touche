@@ -8,7 +8,7 @@ var CurrentExits = require('../currentexits');
 var Pointer = React.createClass({
 	handleClick: function() {
 		if (this.props.cmd) {
-			env.fire('send', 'cmd', this.props.cmd);
+			env.fire('send', 'cmd', this.props.cmd, false, true);
 			env.fire('inputExpected');
 		}
 	},
@@ -35,7 +35,7 @@ var Pointer = React.createClass({
 var Icon = React.createClass({
 	handleClick: function() {
 		if (this.props.cmd) {
-			env.fire('send', 'cmd', this.props.cmd);
+			env.fire('send', 'cmd', this.props.cmd, false, true);
 			env.fire('inputExpected');
 		}
 	},

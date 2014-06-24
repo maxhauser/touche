@@ -111,8 +111,8 @@ var CommandInput = React.createClass({
         var suggestion = this.currentCandidate();
         return (
             <div title="Kommandoeingabe" className={"topcoat-text-input--large command-input-wrapper " + (this.state.compose?'compose':'')} onClick={this.onWrapperClick}>
-                <div className="command-input" title="Kommandoeingabe" aria-role="textbox" aria-autocompletion="inline">
-                    <span ref="input" aria-live="assertive" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true}
+                <div className="command-input" title="Kommandoeingabe">
+                    <span ref="input" aria-live="assertive" aria-role="textbox" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true}
                         onKeyDown={this.keydown} onKeyPress={this.keypress} onPaste={this.handlePasteContent}/>
                     <span aria-role="presentation" className={'input-suggestions' + (suggestion?'':' hidden')}>{suggestion}</span>
                 </div>
@@ -145,7 +145,7 @@ var CommandInput = React.createClass({
     },
     onEditorCancel: function() {
         if (this.state.compose)
-            AppDispatcher.fire('send', 'cmd', '*q\nno', true);
+            AppDispatcher.fire('send', 'cmd', '*q\nno', true, true);
         this.setState({compose: false});
         var input = this.refs.input.getDOMNode();
         input.textContent = '';
@@ -155,7 +155,7 @@ var CommandInput = React.createClass({
         var value = normalize(input.textContent);
         if (this.state.compose) {
             AppDispatcher.fire('send', 'atcp', 'olesetbuf\n' + StringUtils.splitLine(value,75) + '\n');
-            AppDispatcher.fire('send', 'cmd', '*s', true);
+            AppDispatcher.fire('send', 'cmd', '*s', true, true);
         } else {
             env.commandPipeline.send({type:'cmd', value: value});
         }
@@ -238,7 +238,7 @@ var CommandInput = React.createClass({
         if (exit && (e.keyCode > 96 || e.altKey))
         {
             currentexits.lastmove = exit.def;
-            AppDispatcher.fire('send', 'cmd', currentexits.exits[exit.dir] || exit.def);
+            AppDispatcher.fire('send', 'cmd', currentexits.exits[exit.dir] || exit.def, false, true);
             return true;
         }
     },

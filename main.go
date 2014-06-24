@@ -35,16 +35,18 @@ var sessions = make(map[string]*session.Session)
 
 func init() {
 	mime.AddExtensionType(".map", "application/json")
-	mime.AddExtensionType(".otf", "application/x-font-opentype")
+	mime.AddExtensionType(".otf", "font/otf")
 	mime.AddExtensionType(".eot", "application/vnd.ms-fontobject")
 	mime.AddExtensionType(".woff", "application/x-font-woff")
 	mime.AddExtensionType(".svg", "image/svg+xml")
-	mime.AddExtensionType(".ttf", "application/x-font-ttf")
+	mime.AddExtensionType(".ttf", "font/ttf")
 
 	flag.BoolVar(&session.Debugtelnet, "debug", false, "Telnet debugging")
 	flag.BoolVar(&session.Compression, "compression", false, "Use gzip compression")
 	flag.BoolVar(&session.SendRemoteIp, "sendremoteip", false, "Send the remote ip to the mud")
 	flag.IntVar(&session.MaxSessionConnections, "multimaxconn", 2, "Max. connection count per session")
+	flag.BoolVar(&session.Insecure, "insecure", false, "Plain text connection to avalon server")
+	flag.StringVar(&session.ServerAddress, "serveraddress", "", "Avalon server address to connect to (defaults to avalon.mud.de:7777/7778")
 
 	flag.Parse()
 }
@@ -127,18 +129,26 @@ func main() {
 			lock.Lock()
 			defer lock.Unlock()
 			delete(sessions, sess.Id())
+			log.Printf("session ended %s.", plural(len(sessions)))
 			if trace != nil {
 				trace.SessionClosed()
 			}
 		})
+
 		if err == nil {
 			lock.Lock()
 			defer lock.Unlock()
 			sessions[sess.Id()] = sess
+
+			log.Printf("session started %s.", plural(len(sessions)))
+
+			if trace != nil {
+				trace.SessionCreated()
+			}
+		} else {
+			log.Printf("error on session start: %s", err.Error())
 		}
-		if trace != nil {
-			trace.SessionCreated()
-		}
+
 	})
 
 	var scheme string
@@ -148,7 +158,7 @@ func main() {
 		scheme = "http"
 	}
 
-	fmt.Printf("Server is running (listening on %s://%s/)\n", scheme, *address)
+	fmt.Printf("touche server is running (listening on %s://%s/)\n", scheme, *address)
 
 	if *ssl {
 		log.Fatal(http.ListenAndServeTLS(*address, *certFile, *keyFile, nil))
@@ -166,6 +176,22 @@ func attachToExistingSession(sid string, w http.ResponseWriter, r *http.Request)
 		return false
 	}
 
-	sess.Attach(w, r)
+	err := sess.Attach(w, r)
+	if err == nil {
+		log.Printf("session attached %s.", plural(len(sessions)))
+	} else {
+		log.Printf("error on session attach: %s", err.Error())
+	}
+
 	return true
+}
+
+func plural(value int) string {
+	if value == 0 {
+		return "(no active sessions)"
+	} else if value == 1 {
+		return "(1 active session)"
+	} else {
+		return "(" + strconv.Itoa(value) + " active sessions)"
+	}
 }
