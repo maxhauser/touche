@@ -237,6 +237,7 @@ var CommandInput = React.createClass({
 
         if (exit && (e.keyCode > 96 || e.altKey))
         {
+            e.preventDefault();
             currentexits.lastmove = exit.def;
             AppDispatcher.fire('send', 'cmd', currentexits.exits[exit.dir] || exit.def, false, true);
             return true;
