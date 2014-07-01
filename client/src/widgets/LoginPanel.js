@@ -10,14 +10,26 @@ var LoginPanel = React.createClass({
         return {state: Session.isConnected()?'connected':'disconnected'};
     },
     onConnected: function() {
-        this.setState({state: 'connected'});
+        this.setState({state: 'connected'}, function() {
+            AppDispatcher.fire('inputExpected');
+        });
     },
     onDisconnected: function() {
-        this.setState({state: 'disconnected'});
+        this.setState({state: 'disconnected'}, function() {
+            var el = this.refs.user;
+            if (el) {
+                el.getDOMNode().focus();
+            }
+        });
     },
     componentDidMount: function() {
         AppDispatcher.on('connected', this.onConnected); 
         AppDispatcher.on('disconnected', this.onDisconnected); 
+
+        var el = this.refs.user;
+        if (el) {
+            el.getDOMNode().focus();
+        }
     },
     componentWillUnmount: function() {
         AppDispatcher.off('connected', this.onConnected); 
@@ -26,10 +38,9 @@ var LoginPanel = React.createClass({
     click: function(e) {
         e.preventDefault();
 
-        AppDispatcher.fire('inputExpected');
-        if (this.state.state === 'connected')
+        if (this.state.state === 'connected') {
             AppDispatcher.fire('disconnect');
-        else {
+        } else {
             AppDispatcher.fire('connect', this.refs.user.getDOMNode().value, this.refs.pwd.getDOMNode().value);
             this.setState({state: 'connecting'});
         }
@@ -39,7 +50,6 @@ var LoginPanel = React.createClass({
         if (this.state.state !== 'connected') {
             title = (<div className="connection-title">
                         <h3 className="avalon-text">Avalon</h3>
-                        <small>Benutzername und Passwort sind optional.</small>
                      </div>);
         }
         return (<Widget caption="Verbindung" className={"login-widget " + this.state.state}>
@@ -48,10 +58,19 @@ var LoginPanel = React.createClass({
                 {(this.state.state !== 'connected')?[
                 <input key="u" name="username" title="Benutzername" ref="user" type="text" className="topcoat-text-input--large" placeholder="Benutzername"/>,<br key="b1"/>,
                 <input key="p" name="pwd" title="Passwort" ref="pwd" type="password" className="topcoat-text-input--large" placeholder="Passwort"/>,<br key="b2"/>
-                ]:[]}
+                ]:null}
                 <input key={this.state.state}
                     type="submit" className={"topcoat-button--large" + (this.state.state === 'connected'?"":"--cta")}
-                        onClick={this.click} value={this.state.state === 'connected'?"Trennen":"Verbinden"}/>
+                        onClick={this.click} value={this.state.state === 'connected'?"Trennen":"Anmelden"}/>
+                {(this.state.state !== 'connected' && env.lightUI)?[
+                <div className="seperator">
+                    <div className="line"/>
+                    <div className="text">
+                        <small>oder</small>
+                    </div>
+                </div>,
+                <input key="new" type="submit" className="topcoat-button--large" onClick={this.click} value="Neuen Charakter erstellen"/>,
+                ]:null}
             </form>
             </Widget>);
     }

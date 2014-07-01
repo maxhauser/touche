@@ -14,6 +14,10 @@ styles[29] = {clear:['strikethrough']};
 styles[50] = 'framed';
 styles[52] = 'overlined';
 
+function notRecognised(ast) {
+    console.log('not recognised mode secape sequence (' + ast.parts.join(';') + ')');
+}
+
 function modeTransformation(ast, next) {
     if (ast.type !== 'mode-escape')
         return next(ast);
@@ -54,6 +58,7 @@ function modeTransformation(ast, next) {
                 });
             }
 
+            notRecognised(ast);
             return next(ast);
 
         case 2:
@@ -72,6 +77,7 @@ function modeTransformation(ast, next) {
                     });
             }
 
+            notRecognised(ast);
             return next(ast);
 
         case 3:
@@ -82,9 +88,16 @@ function modeTransformation(ast, next) {
                     color: color256[parts[2]]
                 });
             }
+
+            if (p1 === 2 && parts[1] === 37 && parts[2] === 0) {
+                return next({type: 'reset-color'});
+            }
+
+            notRecognised(ast);
             return next(ast);
 
         default:
+            notRecognised(ast);
             return next(ast);
     }
 }

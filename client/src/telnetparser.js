@@ -104,7 +104,7 @@ module.exports = function() {
             ll1 = this.ll1();
             if (ll1 === EOF)
                 return false;
-            if (/[\s>]/.test(ll1)) {
+            if (/[^\w\-]/.test(ll1)) {
                 break;
             }
             name += ll1;
@@ -153,7 +153,7 @@ module.exports = function() {
                     });
                     return true;
                 }
-                if (/\S/.test(ll1))
+                if (/[^\s\x1e]/.test(ll1))
                     break;
                 this.consume();
             }
@@ -177,10 +177,10 @@ module.exports = function() {
                         if (ll1 === del)
                             break;
                     }
-                    ll1 = this.ll1();
+                    break;
                 }
 
-                if (/[\s>]/.test(ll1)) {
+                if (/[\s\x1e>]/.test(ll1)) {
                     break;
                 }
 
@@ -232,7 +232,7 @@ module.exports = function() {
                 return false;
 
             default:
-                this.log('unrecognized escape sequence.');
+                this.log('unrecognized escape sequence (starts with ' + this.ll1() + ').');
                 return true;
         }
 
@@ -323,10 +323,16 @@ module.exports = function() {
                     parts: [mode]
                 });
                 return true;
+            } else if (ll1 === 'J') {
+                this.consume();
+                this.emit({
+                    type: 'clear-to-end'
+                });
+                return true;
             } else if (ll1 === EOF) {
                 return false;
             } else {
-                this.log('unrecognized escape sequence.');
+                this.log('unrecognized escape sequence (starts with ' + this.ll1() + ').');
                 return true;
             }
         }

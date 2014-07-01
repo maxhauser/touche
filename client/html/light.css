@@ -11,6 +11,33 @@ hr {
     border-top: 1px solid black;
 }
 
+.seperator {
+    position: relative;
+    width: 100%;
+    height: 2em;
+    line-height: 2em;
+    margin-bottom: 0.5em;
+}
+
+.seperator .line {
+    border-bottom: 2px solid gray;
+    width: 100%;
+    height: 50%;
+    position: absolute;
+}
+
+.seperator .text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    height: 100%;
+}
+
+.seperator small {
+   background-color: rgb(244, 244, 244); 
+   padding: 0 5px;
+}
+
 .compass-part:hover * {
     filter:url(#back-glow);
 }
@@ -33,6 +60,11 @@ hr {
     border: 2px solid #888;
     padding: 1rem;
     background-color: #f4f4f4;
+}
+
+.login-widget.connected input[type=submit]
+{
+    background-color: white;
 }
 
 .avalon-text {
@@ -308,23 +340,41 @@ a, a:visited, a:link, a:active {
 }
 
 .statusline {
-    background: #e00000; /* Old browsers */
-    background: -moz-linear-gradient(left,  #e00000 0%, #e09a2a 35%, #00e016 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#e00000), color-stop(35%,#e09a2a), color-stop(100%,#00e016)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(left,  #e00000 0%,#e09a2a 35%,#00e016 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(left,  #e00000 0%,#e09a2a 35%,#00e016 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(left,  #e00000 0%,#e09a2a 35%,#00e016 100%); /* IE10+ */
-    background: linear-gradient(to right,  #e00000 0%,#e09a2a 35%,#00e016 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e00000', endColorstr='#00e016',GradientType=1 ); /* IE6-9 */
+    /*
+    background: #e00000;
+    background: -moz-linear-gradient(left,  #e00000 0%, #e09a2a 35%, #00e016 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#e00000), color-stop(35%,#e09a2a), color-stop(100%,#00e016));
+    background: -webkit-linear-gradient(left,  #e00000 0%,#e09a2a 35%,#00e016 100%);
+    background: -o-linear-gradient(left,  #e00000 0%,#e09a2a 35%,#00e016 100%);
+    background: -ms-linear-gradient(left,  #e00000 0%,#e09a2a 35%,#00e016 100%);
+    background: linear-gradient(to right,  #e00000 0%,#e09a2a 35%,#00e016 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e00000', endColorstr='#00e016',GradientType=1 );
+    */
 
     /*width: 100%;*/
     height: 1.2rem;
     background-clip: content-box;
 }
 
+.tp .statusline {
+    background-color: #a0ce00;
+}
+
+.sp .statusline {
+    background-color: #ff7f50;
+}
+
+.ap .statusline {
+    background-color: #4169e1;
+}
+
+.mp .statusline {
+    background-color: #9370db;
+}
+
 .statusline-bg {
-    background-color: #373838;
-    border: 1px solid #373838;
+    background-color: #aaa;
+    /*border: 1px solid #ccc;*/
     clear: both;
     position: relative;
 }

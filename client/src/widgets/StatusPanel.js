@@ -13,7 +13,7 @@ var StatusBar = React.createClass({
 		var styles = {};
 		if (this.props.direction === 'horizontal')
 			styles.display = 'inline-block';
-		return <div className="statusline-wrap" style={styles}>
+		return <div className={"statusline-wrap " + (this.props.className||'')} style={styles}>
 			<div className="statusline-bg">
 				<div className="statusline" style={{'padding-right': perc + '%'}}/>
 			</div>
@@ -65,7 +65,7 @@ var StatusPanel = React.createClass({
 			_.each(stats, function(st) {
 				var s = state[st];
 				var enabled = s && s.max;
-				items.push(<StatusBar key={st} enabled={enabled} curr={s?s.curr:'?'} max={s?s.max:'?'} label={label[st]} direction={this.props.direction}/>);
+				items.push(<StatusBar key={st} className={st} enabled={enabled} curr={s?s.curr:'?'} max={s?s.max:'?'} label={label[st]} direction={this.props.direction}/>);
 			}, this);
 		}
 		return <Widget caption="Stats">{items}</Widget>;
