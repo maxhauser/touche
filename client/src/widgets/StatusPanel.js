@@ -68,7 +68,7 @@ var StatusPanel = React.createClass({
 				items.push(<StatusBar key={st} className={st} enabled={enabled} curr={s?s.curr:'?'} max={s?s.max:'?'} label={label[st]} direction={this.props.direction}/>);
 			}, this);
 		}
-		return <Widget caption="Stats">{items}</Widget>;
+		return <Widget caption="Stats" className="widget-stats">{items}</Widget>;
 	}
 });
 

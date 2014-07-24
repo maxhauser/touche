@@ -38,17 +38,8 @@ hr {
    padding: 0 5px;
 }
 
-.compass-part:hover * {
-    filter:url(#back-glow);
-}
-
 .commands-widget-list-item {
     color: #777;
-}
-
-.compass-widget {
-    position: absolute;
-    bottom: 20px;
 }
 
 .goto-suggestion-distance {
@@ -118,6 +109,7 @@ hr {
     opacity: 0.6;
     display: table-cell;
     vertical-align: top;
+    transition: opacity 1s linear;
 
     min-width: 220px;
     padding: 10px 10px 0 10px;
@@ -163,6 +155,7 @@ hr {
 
 .widget:hover {
     opacity: 1;
+    transition: opacity 1s linear;
 }
 
 .widget input,
@@ -372,47 +365,6 @@ a, a:visited, a:link, a:active {
     background-color: #9370db;
 }
 
-.statusline-bg {
-    background-color: #aaa;
-    /*border: 1px solid #ccc;*/
-    clear: both;
-    position: relative;
-}
-
-.statusline-inlinelabel {
-    top: 0;
-    position: absolute;
-    line-height: 1.3rem;
-    padding-left: 0.1rem;
-    margin: 1px;
-}
-
-.statusline-wrap {
-    margin: 0.4rem;
-    min-width: 150px;
-}
-
-.statusline-label {
-    /*color: #c6c8c8;*/
-    font-size: small;
-    padding-left: 2px; 
-    line-height: 1.2rem;
-    white-space: nowrap;
-}
-
-.spell-actions {
-    float: right;
-}
-
-.spell-action {
-    display: block;
-    width: 16px;
-    height: 16px;
-    margin-top: 4px;
-    cursor: pointer;
-    text-shadow: none;
-}
-
 .version {
     font-size: small;
     margin-bottom: 1rem;
@@ -478,4 +430,17 @@ a.notsupported-forcelink {
 
 .widget-leave.widget-leave-active {
   opacity: 0.01;
+}
+
+input.login-new, input.login-guest {
+    width: 48% !important;
+    display: inline-block;
+}
+
+input.login-new {
+    margin-right: 4%;
+}
+
+.widget-stats:hover {
+    opacity: 0.6;
 }

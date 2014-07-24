@@ -36,7 +36,7 @@ var DropboxPanel = React.createClass({
 			if(error) {
 				Alertify.error('Error loading "' + file  + '": ' + error);
 			} else {
-				api.cls(name).destroy();
+				api.destroy(name);
 				api.cls(name).exec(content, file);
 				Alertify.log('Loaded ' + file);
 			}
@@ -45,7 +45,7 @@ var DropboxPanel = React.createClass({
 	loadStartupScript: function() {
 		this.state.client.readFile("autoexec.coffee", {httpCache: false}, function(error, content, stats, range) {
 			if(!error) {
-				Api.cls('autoexec').destroy();
+				Api.destroy('autoexec');
 				Api.cls('autoexec').exec(content, 'autoexec.coffee');
 				Alertify.log('Loaded autoexec.coffee.');
 			}

@@ -26,6 +26,19 @@ var SpellActionButton = React.createClass({
 
 var CastBar = React.createClass({
     render: function() {
+        var padding = 100 - this.props.curr;
+        if (padding > 100) padding = 100;
+        if (padding < 0) padding = 0;
+
+        var bar;
+
+        if (this.props.running) {
+            bar = <div className="statusline-bg">
+                <div className="statusline" style={{'padding-right': padding + '%'}}/>
+                <div className="statusline-inlinelabel">{this.props.lineLabel}</div>
+            </div>;
+        }
+
         return <div className="statusline-wrap">
             <div className="topcoat-button-bar spell-actions">
                 <SpellActionButton onClick={this.props.onPerpetualClick} checked={this.props.perpetual} icon="repeat" title="Wiederholen"/>
@@ -33,10 +46,7 @@ var CastBar = React.createClass({
                 <SpellActionButton onClick={this.props.onPlayStopClick} checked={this.props.running} icon={this.props.running?'stop':'play'} title={this.props.running?'Abbrechen':'Zaubern'}/>
             </div>      
             <div className="statusline-label">{this.props.label}</div>
-            <div className="statusline-bg">
-                <div className="statusline" style={{'padding-right': (100 - this.props.curr) + '%'}}/>
-                <div className="statusline-inlinelabel">{this.props.lineLabel}</div>
-            </div>
+            {bar}
         </div>;
     }
 }); 
@@ -47,40 +57,48 @@ var spells = {
         caption: 'Arkanschild',
         run: 'zz arkanschild',
         stop: 'z stop arkanschild',
-        start: /Du wirst von einem Arkanschild umgeben\./,
-        end: /Dein Arkanschild loest sich auf\./
+        start: /^Du wirst von einem Arkanschild umgeben\./,
+        end: /^Dein Arkanschild loest sich auf\./
     },
     magieaufladung: {
         name: 'magieaufladung',
         caption: 'Magieaufladung',
         run: 'z magieaufladung',
         stop: 'z stop magieaufladung',
-        start: /Du hast einen Teil Deiner regenerativen Energien in Deine Zauber umgelenkt\./,
-        end: /Deine Energien fliessen wieder normal\./
+        start: /^Du hast einen Teil Deiner regenerativen Energien in Deine Zauber umgelenkt\./,
+        end: /^Deine Energien fliessen wieder normal\./
     },
     daemonenhaut: {
         name: 'daemonenhaut',
         caption: 'Dämonenhaut',
         run: 'zz daemonenhaut',
         stop: 'z stop daemonenhaut',
-        start: /Du bist nun vollkommen in eine Daemonenhaut eingehuellt\./,
-        end: /Deine Daemonenhaut loest sich auf\./
+        start: /^Du bist nun vollkommen in eine Daemonenhaut eingehuellt\./,
+        end: /^Deine Daemonenhaut loest sich auf\./
     },
     windhaut: {
         name: 'windhaut',
         caption: 'Windhaut',
         run: 'zz windhaut',
         stop: 'z stop windhaut',
-        start: /Du bist nun vollkommen in eine Windhaut eingehuellt\./,
-        end: /Deine Windhaut loest sich auf\./
+        start: /^Du bist nun vollkommen in eine Windhaut eingehuellt\./,
+        end: /^Deine Windhaut loest sich auf\./
     },
     feueraura: {
         name: 'feueraura',
         caption: 'Feueraura',
         run: 'zz feueraura',
         stop: 'z stop feueraura',
-        start: /Du senkst Deine Haende, aber der Schutz der Manawolken umgibt Dich/,
-        end: /Deine Feueraura loest sich auf\./
+        start: /^Du senkst Deine Haende, aber der Schutz der Manawolken umgibt Dich/,
+        end: /^Deine Feueraura loest sich auf\./
+    },
+    sternenstaub: {
+        name: 'sternenstaub',
+        caption: 'Sternenstaub',
+        run: 'zz sternenstaub',
+        stop: 'z stop sternenstaub',
+        start: /^Du wirst von Sternenstaub umgeben\./,
+        end: /^Dein Sternenstaub loest sich auf\./
     }
     /*
     , manarausch: {

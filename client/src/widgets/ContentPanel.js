@@ -241,6 +241,8 @@ var Content = React.createClass({
 					AppDispatcher.fire('textline', this.state.line);
 					this.setState({line: ''});
 				}
+				this.setStyles({});
+				this.setClasses([]);
 				break;
 
 			case 'reset-style':
@@ -337,7 +339,7 @@ var Content = React.createClass({
 		}
 
 		if (name === 'support') {
-			AppDispatcher.fire('send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR>', true);
+			AppDispatcher.fire('send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR +IMAGE>', true);
 		} else if (name === 'version') {
 			AppDispatcher.fire('send', 'cmd', '\x1b[1z<VERSION MXP=1.2>', true);
 		} else if (name === 'a') {
@@ -400,6 +402,27 @@ var Content = React.createClass({
 				styles.fontFamily = options.face;
 			if (options.size)
 				styles.fontSize = options.size + 'pt';
+		} else if (name === 'image') {
+			el = document.createElement('img');
+			options = mxp.attribsToObject(ast.attribs);
+			el.src = options.url + (options.fname || '');
+			if (options.w) el.width = options.w;
+			if (options.h) el.height = options.h;
+			if (options.hspace) {
+				el.styles.paddingLeft = options.hspace;
+				el.styles.paddingRight = options.hspace;
+			}
+			if (options.vspace) {
+				el.styles.paddingTop = options.vspace;
+				el.styles.paddingBottom = options.vspace;
+			}
+			if (options.align === 'left') el.styles.textAlign = 'left';
+			if (options.align === 'right') el.styles.textAlign = 'right';
+			if (options.align === 'top') el.styles.verticalAlign = 'top';
+			if (options.align === 'middle') el.styles.verticalAlign = 'middle';
+			if (options.align === 'bottom') el.styles.verticalAlign = 'bottom';
+			this.openTag(name, el, true);
+			this.closeTag(name);
 		} else {
 			var def = this.state.mxpDefs.element[name];
 			if (def) {

@@ -68,12 +68,13 @@ if (DEBUG) {
 var config = {
 	plugins: [],
 	ui: {
+		className: 'light',
 		style: {
 			//width: '100%',
 			height: '100%'
 		},
 		children: cns
-	}
+	},
 };
 
 if (DEBUG) {

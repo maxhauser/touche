@@ -35,13 +35,21 @@ var LoginPanel = React.createClass({
         AppDispatcher.off('connected', this.onConnected); 
         AppDispatcher.off('disconnected', this.onDisconnected); 
     },
-    click: function(e) {
+    handleConnect: function(e) {
         e.preventDefault();
 
         if (this.state.state === 'connected') {
             AppDispatcher.fire('disconnect');
         } else {
             AppDispatcher.fire('connect', this.refs.user.getDOMNode().value, this.refs.pwd.getDOMNode().value);
+            this.setState({state: 'connecting'});
+        }
+    },
+    handleDirectConnect: function(e) {
+        e.preventDefault();
+
+        if (this.state.state !== 'connected') {
+            AppDispatcher.fire('connect');
             this.setState({state: 'connecting'});
         }
     },
@@ -54,23 +62,25 @@ var LoginPanel = React.createClass({
         }
         return (<Widget caption="Verbindung" className={"login-widget " + this.state.state}>
             {title}
-            <form action="index.html" className="connection-form" method="POST" onSubmit={this.click} autoComplete="on">
+                {(this.state.state !== 'connected' && env.lightUI)?[
+                <form action="index.html" className="connection-form" method="POST" onSubmit={this.handleDirectConnect} autoComplete="on">
+                <input key="new" type="submit" className="topcoat-button--large--cta" onClick={this.handleDirectConnect} value="sofort spielen"/>
+                <div key="sep" className="seperator">
+                    <div className="line"/>
+                    <div className="text">
+                        <small>oder</small>
+                    </div>
+                </div>
+                </form>
+                ]:null}
+                <form action="index.html" className="connection-form" method="POST" onSubmit={this.handleConnect} autoComplete="on">
                 {(this.state.state !== 'connected')?[
                 <input key="u" name="username" title="Benutzername" ref="user" type="text" className="topcoat-text-input--large" placeholder="Benutzername"/>,<br key="b1"/>,
                 <input key="p" name="pwd" title="Passwort" ref="pwd" type="password" className="topcoat-text-input--large" placeholder="Passwort"/>,<br key="b2"/>
                 ]:null}
                 <input key={this.state.state}
                     type="submit" className={"topcoat-button--large" + (this.state.state === 'connected'?"":"--cta")}
-                        onClick={this.click} value={this.state.state === 'connected'?"Trennen":"Anmelden"}/>
-                {(this.state.state !== 'connected' && env.lightUI)?[
-                <div className="seperator">
-                    <div className="line"/>
-                    <div className="text">
-                        <small>oder</small>
-                    </div>
-                </div>,
-                <input key="new" type="submit" className="topcoat-button--large" onClick={this.click} value="Neuen Charakter erstellen"/>,
-                ]:null}
+                        onClick={this.handleConnect} value={this.state.state === 'connected'?"trennen":"anmelden"}/>
             </form>
             </Widget>);
     }

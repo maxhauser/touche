@@ -67,6 +67,7 @@ var config = {
 	plugins: ['scripting', 'automapper', 'audio'],
 	ui: {
 		key: 'main',
+		className: 'dark',
 		style: {
 			width: '100%',
 			height: '100%'

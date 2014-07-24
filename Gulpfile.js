@@ -80,6 +80,9 @@ gulp.task('webpack', ['clean'], function(cb) {
                 test: /\.js$/,
                 include: /client\/src\/.+\.js$/,
                 loader: 'jsx'
+            }, {
+                test: /\.less$/,
+                loader: 'style!css!less' 
             }],
             postLoaders: [{
                 test: /\.js/,

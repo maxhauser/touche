@@ -29,13 +29,15 @@ _.assign(Api.fn, {
 		return cls;
 	},
 
-	destroy: function() {
-		this.state = {};
+	destroy: function(className) {
+		var cls = className ? this.classes[className] : this;
 
-		if (!this.parent)
+		if (!cls || !cls.parent)
 			return;
 
-		delete this.parent.classes[this.name];
+		cls.state = {};
+		delete cls.parent.classes[cls.name];
+		Alertify.log('Class ' + cls.name + ' destroyed.');
 	},
 
 	enable: function() {
@@ -362,6 +364,7 @@ Api.fn.unsub = Api.unsubstitute;
 Api.fn.walk = Api.fn.map.walkto;
 Api.fn.find = Api.fn.map.find;
 Api.fn.gehe = Api.fn.map.walkto;
+Api.fn.unload = Api.fn.destroy;
 
 // trigger
 
