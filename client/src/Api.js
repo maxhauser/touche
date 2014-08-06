@@ -35,7 +35,13 @@ _.assign(Api.fn, {
 		if (!cls || !cls.parent)
 			return;
 
-		cls.state = {};
+		var eventHandlers = cls.state && cls.state.eventHandlers;
+		if (eventHandlers) {
+			_.forEach(eventHandlers, function(h) {
+				Dispatcher.un(h.eventName, h.handler);
+			});
+		}
+
 		delete cls.parent.classes[cls.name];
 		Alertify.log('Class ' + cls.name + ' destroyed.');
 	},
@@ -114,9 +120,13 @@ mych.receive(function(line) {
 _.assign(Api.fn, {
 	env: env,
 	on: function(eventName, handler) {
+		var eventHandlers = this.state.eventHandlers || (this.state.eventHandlers = []);
+		eventHandlers.push({eventName: eventName, handler: handler});
 		Dispatcher.on(eventName, handler);
 	},
 	un: function(eventName, handler) {
+		var eventHandlers = this.state.eventHandlers || (this.state.eventHandlers = []);
+		_.remove(eventHandlers, function(h) { return h.eventName === eventName && h.handler === handler; });
 		Dispatcher.un(eventName, handler);
 	},
 	send: function(cmd) {
@@ -217,7 +227,6 @@ _.assign(Api.fn, {
 		if (subs)
 			delete subs[search.source||search];
 	},
-	*/
 	map: {
 		setIcon: function(icon) {
 			roomdb.current().icon = icon;
