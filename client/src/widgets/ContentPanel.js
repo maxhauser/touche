@@ -555,7 +555,7 @@ var Content = React.createClass({
 		this.lastline = this.linecount;
 
 		var frag = this.fragel;
-		this.setState({afterinput: false});
+		//this.setState({afterinput: false});
 		if (frag) {
 			var atbottom = this.atBottom();
 			this.fragel = null;

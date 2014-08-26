@@ -31,7 +31,7 @@ var PointerLight = React.createClass({
 				onClick={this.handleClick} className={this.props.cmd?'compass-part':''}>
 				<polyline points="15 -15 0 -80 -15 -15" fill="white"/>
 				<path d="M15 -15 L0 -80 -15 -15" style={linestyle} className="glow"/>
-				<text x={0} y={-88} style={textstyle} className="glow">{this.props.text}</text>
+				<text transform={"rotate(" + -this.props.rotate + " 0 -95)"} x={0} y={-88} style={textstyle} className="glow">{this.props.text}</text>
 			</g>
 		);
 	}
