@@ -55,7 +55,7 @@ var PointerDark = React.createClass({
 		}
 		var textel;
 		if (this.props.text)
-			textel = <text x={0} y={-88} style={{textAnchor:'middle',fontFamily:'President',fontSize:'1.4rem'}}>{this.props.text}</text>;
+			textel = <text transform={"rotate(" + -this.props.rotate + " 0 -95)"} x={0} y={-88} style={{textAnchor:'middle',fontFamily:'President',fontSize:'1.4rem'}}>{this.props.text}</text>;
 
 		return (
 			<g transform={"rotate(" + this.props.rotate + ")" + (this.props.scale?" scale(" + this.props.scale + ")":"")}
