@@ -12,6 +12,7 @@ var VersionDisplay = React.createClass({
 	},
     render: function() {
         return (<p className="widget version">
+        	<a target="_blank" title="Avalon Webseite" href="http://avalon.mud.de/index.php?enter=1">Avalon Webseite</a><br/>
             <a target="_blank" title="Fehler oder Idee melden" onClick={this.supportClick} href={href}>Bitte hilf mit und melde Fehler oder Ideen hier.</a><span> Danke!</span>
         </p>);
     }

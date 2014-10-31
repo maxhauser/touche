@@ -2,9 +2,12 @@
 var React = require('react');
 var _ = require('lodash');
 
+require('./ContentPanel.less');
+
 var mxp = require('../mxputils');
 var CurrentExits = require('../currentexits');
 var AppDispatcher = require('../AppDispatcher');
+var env = require('../Environment');
 
 var kletterfail = 'Dort musst Du nicht mehr klettern.';
 var schwimmfail = 'Dort musst Du nicht mehr schwimmen.';
@@ -13,6 +16,9 @@ var Component = require('../component');
 var Parser = require('../parser');
 var TelnetParser = require('../telnetparser');
 var MxpParser = Component.define(Parser, TelnetParser);
+//var ColorUtils = require('../ColorUtils');
+
+var StringUtils = require('../StringUtils');
 
 var StringUtils = require('../StringUtils');
 
@@ -48,10 +54,10 @@ var PopupMenu = React.createClass({
 
 var Content = React.createClass({
 	render: function() {
-		return this.transferPropsTo(<div className="content-wrap">
+		return (<div {...this.props} className={"content-wrap " + (this.props.className||"")}>
 			<div className="content-scroll">
 				<div className="content-overlay"/>
-				<article ref="content" aria-role="log" aria-live="polite" className="content" onClick={this.onClick} tabIndex={-1}/>
+				<article ref="content" aria-role="log" aria-live="polite" className={"content" + (env.fixedScroll?" fixed":"")} onClick={this.onClick} tabIndex={-1}/>
 			</div>
 		</div>);
 	},
@@ -165,6 +171,7 @@ var Content = React.createClass({
 	componentDidMount: function() {
 		AppDispatcher.on('ast', this.emit);
 		AppDispatcher.on('atcp', this.onAtcp);
+		AppDispatcher.on('mxp', this.onMxp);
         AppDispatcher.on('connected', this.forceSendSize);
         AppDispatcher.on('send', this.onSend);
         window.addEventListener('resize', this.sendSize);
@@ -176,6 +183,7 @@ var Content = React.createClass({
 	componentWillUnmount: function() {
 		AppDispatcher.off('ast', this.emit);
 		AppDispatcher.off('atcp', this.onAtcp);
+		AppDispatcher.off('mxp', this.onMxp);
         AppDispatcher.off('connected', this.forceSendSize);
         AppDispatcher.off('send', this.onSend);
         window.removeEventListener('resize', this.sendSize);
@@ -241,8 +249,8 @@ var Content = React.createClass({
 					AppDispatcher.fire('textline', this.state.line);
 					this.setState({line: ''});
 				}
-				this.setStyles({});
-				this.setClasses([]);
+				//this.setStyles({});
+				//this.setClasses([]);
 				break;
 
 			case 'reset-style':
@@ -337,9 +345,8 @@ var Content = React.createClass({
 				CurrentExits.exits[a.exithint] = a.exitdir;
 			}
 		}
-
 		if (name === 'support') {
-			AppDispatcher.fire('send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR +IMAGE>', true);
+			AppDispatcher.fire('send', 'cmd', '\x1b[1z<SUPPORTS +I +A +COLOR +IMAGE +EXIPRE +FONT +SEND +B +U +BR +HR +USERNAME +PASSWORD +VERSION +SUPPORT>', true);
 		} else if (name === 'version') {
 			AppDispatcher.fire('send', 'cmd', '\x1b[1z<VERSION MXP=1.2>', true);
 		} else if (name === 'a') {
@@ -379,6 +386,7 @@ var Content = React.createClass({
 					delete CurrentExits.exits[key];
 				});
 				delete CurrentExits.lastmove;
+				this.expireRoom();
 			}
 		} else if (name === 'send') {
 			el = document.createElement('a');
@@ -438,6 +446,23 @@ var Content = React.createClass({
 			} else {
 				console.log('unknown mxp tag', ast);
 			}
+		}
+	},
+	onMxp: function(value) {
+		var parser = new MxpParser();
+		parser.onEmit = this.emit;
+		parser.feed(value);
+	},
+	expireRoom: function() {
+		var nodes = this.renderNode.childNodes;
+		var removeNodes = this.removeNodes || (this.removeNodes = []);
+		for (var i = nodes.length - 1; i >= 0; i--) {
+			var node = nodes[i];
+
+			if (!node.classList.contains('current-room'))
+				return;
+
+			removeNodes.push(node);
 		}
 	},
 	addMxpElementDefinition: function(ast) {
@@ -543,6 +568,9 @@ var Content = React.createClass({
 			scrollEl.scrollTop = scrollEl.scrollHeight;
 	},
 	atBottom: function() {
+		if (env.fixedScroll)
+			return;
+
 		var scrollEl = this.renderNode;
 		if (scrollEl)
 			return (scrollEl.scrollTop + scrollEl.clientHeight + 100) >= scrollEl.scrollHeight;
@@ -562,6 +590,14 @@ var Content = React.createClass({
 			this.renderNode.appendChild(frag);
 			if (this.props.autoScroll && atbottom)
 				this.scrollToBottom();
+		}
+
+		var removeNodes = this.removeNodes;
+		if (removeNodes) {
+			for (var i = removeNodes.length - 1; i >= 0; i--) {
+				removeNodes[i].classList.remove('current-room');
+			}
+			this.removeNodes = null;
 		}
 	},
 	getLineEl: function() {
@@ -584,7 +620,7 @@ var Content = React.createClass({
 				*/
 
 			lineel = document.createElement('div');
-			lineel.className = 'row';
+			lineel.className = 'row current-room';
 			this.linecount++;
 
 			//}
@@ -628,8 +664,16 @@ var Content = React.createClass({
 		for (var key in styles) {
 			if (!styles.hasOwnProperty(key))
 				continue;
-			span.style[key] = styles[key];
+
+/*
+			if (key === 'color') {
+				span.style.color = ColorUtils.mapColor(styles.color);
+			} else {
+				*/
+				span.style[key] = styles[key];
+			//}
 		}
+
 		span.textContent = text;
 		var parent = this.getLineEl();
 		for (var i=0,l=tags.length;i<l;i++) {

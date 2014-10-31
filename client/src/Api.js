@@ -4,6 +4,7 @@ var env = require('./Environment');
 var roomdb = require('./roomdb');
 var Pathfinder = require('./Pathfinder');
 var Alertify = require('./alertify');
+var Queue = require('./Queue');
 
 var ApiClass = function(name, parent) {
 	this.name = name;
@@ -19,12 +20,24 @@ ApiClass.prototype.fn = ApiClass.prototype;
 
 var Api = new ApiClass('global');
 
+function myForEach(coll, fn, scope) {
+	var bailout;
+	_.forEach(coll, function(n) {
+		bailout = fn.call(this, n);
+		return bailout;
+	}, scope);
+	return bailout;
+}
+
+Api.fn.TablePrinter = require('./TablePrinter');
+
 _.assign(Api.fn, {
 	cls: function(name) {
 		var cls = this.classes[name];
 		if (!cls) {
 			cls = new ApiClass(name, this);
 			this.classes[name] = cls;
+			this['$' + name] = cls;
 		}
 		return cls;
 	},
@@ -42,7 +55,22 @@ _.assign(Api.fn, {
 			});
 		}
 
+		var queues = cls.state && cls.state.queues;
+		if (queues) {
+			_.forEach(queues, function (q) {
+				q.stop();
+			});
+		}
+
+		var tickers = cls.state && this.state.tickers;
+		if (tickers) {
+			_.forEach(tickers, function(t) {
+				window.clearInterval(t);
+			});
+		}
+
 		delete cls.parent.classes[cls.name];
+		delete cls.parent['$' + cls.name];
 		Alertify.log('Class ' + cls.name + ' destroyed.');
 	},
 
@@ -58,10 +86,12 @@ _.assign(Api.fn, {
 		if (this.disabled)
 			return;
 
-		_.each(this.state[name], fn);
-		_.each(this.classes, function(cls) {
-			cls.each(name, fn);
-		});
+		if (myForEach(this.state[name], fn, this) === false)
+			return false;
+
+		return myForEach(this.classes, function(cls) {
+			return cls.each(name, fn);
+		}, this);
 	}
 });
 
@@ -117,6 +147,32 @@ mych.receive(function(line) {
 		mych.send(line);
 });
 
+
+var ch = env.commandPipeline.add();
+ch.receive(function(cmd) {
+	if (cmd.type === 'cmd' && cmd.value[0] !== env.scriptMarker) {
+		var r = Api.each('aliases', function(alias) {
+			var m = alias.regex.exec(cmd.value);
+			if (m) {
+				var cmds = alias.handler.apply(this, m) || '';
+				if (_.isArray(cmds)) {
+					_.each(cmds, function (cmd) {
+						ch.send({type: 'cmd', value: cmd});
+
+					});
+				} else if(_.isString(cmds)) {
+					ch.send({type: 'cmd', value: cmds});
+				}
+				return false;
+			}
+		});
+		if (r === false)
+			return;
+	}
+
+	ch.send(cmd);
+});
+
 _.assign(Api.fn, {
 	env: env,
 	on: function(eventName, handler) {
@@ -169,12 +225,14 @@ _.assign(Api.fn, {
 		var actions = this.state.actions || (this.state.actions = {});
 		delete actions[search.source||search];
 	},
-	/*
-	alias: function(name, command) {
-		aliases[name] = command;
+	alias: function(match, commands) {
+		var aliases = this.state.aliases || (this.state.aliases = {});
+		var re = (match instanceof RegExp)?match:new RegExp('^' + match + '$', 'i');
+		aliases[match.source||match] = { handler: commands, regex: re };
 	},
-	unalias: function(name) {
-		delete aliases[name];
+	unalias: function(match) {
+		var aliases = this.state.aliases || (this.state.aliases = {});
+		delete aliases[match.source||match];
 	},
 	*/
 	delay: function(name, seconds, handler) {
@@ -272,6 +330,11 @@ _.assign(Api.fn, {
 		remove: function() {
 			roomdb.remove(roomdb.current().id);
 		}
+	},
+	queue: function(name) {
+	    var queues = this.state.queues || (this.state.queues = {});
+	    var queue = queues[name] || (queues[name] = new Queue(name));
+	    return queue;
 	}
 });
 

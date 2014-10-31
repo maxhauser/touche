@@ -12,7 +12,8 @@ var env = {
 	commandPipeline: new Pipeline(),
 	on: Dispatcher.on.bind(Dispatcher),
 	off: Dispatcher.off.bind(Dispatcher),
-	fire: Dispatcher.fire.bind(Dispatcher)
+	fire: Dispatcher.fire.bind(Dispatcher),
+	fixedScroll: false
 };
 
 env.tokenPipeline.receive(function(ast) { Dispatcher.fire('ast', ast); });

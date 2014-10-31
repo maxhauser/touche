@@ -19,6 +19,12 @@ bin/avalon: $(SRC)
 	#GOOS=linux GOARCH=amd64 $(GO) build -o bin/avalon -tags newrelic $(SRC)
 	GOOS=linux GOARCH=amd64 $(GO) build -o bin/avalon $(SRC)
 
+bin/touche.linux.x86-32: $(SRC)
+	GOOS=linux GOARCH=386 $(GO) build -o bin/touche.linux.x86-32 $(SRC)
+
+bin/touche.linux.x86-64: $(SRC)
+	GOOS=linux GOARCH=amd64 $(GO) build -o bin/touche.linux.x86-64 $(SRC)
+
 clean-client:
 	$(RM) -rf dist
 
@@ -39,3 +45,8 @@ publish-server: clean-server bin/avalon
 	#-$(SSH) $(HOST) -i $(KEY) "cd ava && ./stop"
 	$(SCP) -oIdentityFile=$(KEY) -r bin/avalon ubuntu@avalon.hij.cc:ava/avalon.new
 	#$(SSH) $(HOST) -i $(KEY) "cd ava && ./start"
+
+dist: bin/touche.linux.x86-32 bin/touche.linux.x86-64 clean-client client
+	-rm touche.tgz
+	tar -czf touche.tgz dist -C bin touche.linux.x86-32 touche.linux.x86-64
+

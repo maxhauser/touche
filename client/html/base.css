@@ -40,38 +40,6 @@
     font-style: normal;
 }
 
-.statusline-wrap {
-  clear: both;
-}
-
-.statusline-bg {
-    /*background-color: #aaa;*/
-    /*border: 1px solid #ccc;*/
-    clear: both;
-    position: relative;
-}
-
-.statusline-inlinelabel {
-    top: 0;
-    position: absolute;
-    line-height: 1.3rem;
-    padding-left: 0.1rem;
-    margin: 1px;
-}
-
-.statusline-wrap {
-    margin: 0.4rem;
-    min-width: 150px;
-}
-
-.statusline-label {
-    /*color: #c6c8c8;*/
-    font-size: small;
-    padding-left: 2px; 
-    line-height: 1.8rem;
-    white-space: nowrap;
-}
-
 .spell-action {
     display: block;
     width: 16px;
@@ -86,30 +54,9 @@
     padding-right: 4px;
 }
 
-.commands-widget {
-  display: table-cell;
-}
-
-.commands-widget-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.commands-widget-list-item {
-  display: inline-block;
-  padding: 0.2rem;
-  font-size: smaller;
-}
-
 a {
   text-decoration: underline;
   cursor: pointer;
-}
-
-.echo {
-    color: orange;
-    font-weight: bolder;
 }
 
 .goto-suggestion-list {
@@ -165,30 +112,9 @@ a {
   margin: 0;
 }
 
-.commands-widget {
-  display: table-cell;
-}
-
-.commands-widget-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.commands-widget-list-item {
-  display: inline-block;
-  padding: 0.2rem;
-  font-size: smaller;
-}
-
 a {
   text-decoration: underline;
   cursor: pointer;
-}
-
-.echo {
-    color: orange;
-    font-weight: bolder;
 }
 
 .goto-suggestion-list {
@@ -287,22 +213,45 @@ a {
   padding: 3px 4px;
 }
 
+
+.content a {
+  text-decoration: none;
+  cursor: default;
+}
+
+.current-room a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .mxp-menu-icon {
-    line-height: inherit;
-    color: #777;
+  visibility: hidden;
+  line-height: inherit;
+  color: #777;
 
-    position: absolute;
-    right: -0.8em;
-    font-size: 0.5em;
-    top: -0.6em;
+  position: absolute;
+  right: -0.8em;
+  font-size: 0.5em;
+  top: -0.6em;
 }
 
-.mxp-send {
-    position: relative;
-    text-decoration: underline;
-    cursor: pointer;
-    display: inline-block;
+.current-room .mxp-menu-icon {
+  visibility: visible;
 }
+
+.current-room .mxp-send {
+  position: relative;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/*
+.mxp-send-menu > * {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+*/
 
 /*
 .mxp-send-menu > * {

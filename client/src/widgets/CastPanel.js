@@ -74,7 +74,8 @@ var spells = {
         run: 'zz daemonenhaut',
         stop: 'z stop daemonenhaut',
         start: /^Du bist nun vollkommen in eine Daemonenhaut eingehuellt\./,
-        end: /^Deine Daemonenhaut loest sich auf\./
+        end: /^Deine Daemonenhaut loest sich auf\./,
+        optional: true
     },
     windhaut: {
         name: 'windhaut',
@@ -82,7 +83,8 @@ var spells = {
         run: 'zz windhaut',
         stop: 'z stop windhaut',
         start: /^Du bist nun vollkommen in eine Windhaut eingehuellt\./,
-        end: /^Deine Windhaut loest sich auf\./
+        end: /^Deine Windhaut loest sich auf\./,
+        optional: true
     },
     feueraura: {
         name: 'feueraura',
@@ -90,7 +92,8 @@ var spells = {
         run: 'zz feueraura',
         stop: 'z stop feueraura',
         start: /^Du senkst Deine Haende, aber der Schutz der Manawolken umgibt Dich/,
-        end: /^Deine Feueraura loest sich auf\./
+        end: /^Deine Feueraura loest sich auf\./,
+        optional: true
     },
     sternenstaub: {
         name: 'sternenstaub',
@@ -98,7 +101,26 @@ var spells = {
         run: 'zz sternenstaub',
         stop: 'z stop sternenstaub',
         start: /^Du wirst von Sternenstaub umgeben\./,
-        end: /^Dein Sternenstaub loest sich auf\./
+        end: /^Dein Sternenstaub loest sich auf\./,
+        optional: true
+    },
+    todesaura: {
+        name: 'todesaura',
+        caption: 'Todesaura',
+        run: 'zz feueraura',
+        stop: 'z stop todesaura',
+        start: /^Du senkst Deine Haende, aber der Schutz der schwarzen Schleier umgibt Dich/,
+        end: /^Deine Todesaura loest sich auf\./,
+        optional: true
+    },
+    blutrausch: {
+        name: 'blutrausch',
+        caption: 'Blutrausch',
+        run: 'zz blutrausch',
+        stop: 'z stop blutrausch',
+        start: /^Du laesst einen fuerchterlichen Urschrei von Dir\./,
+        end: /^Die roetlichen Manawolken loesen sich auf\./,
+        optional: true
     }
     /*
     , manarausch: {
@@ -207,10 +229,13 @@ var CastPanel = React.createClass({
                     lineLabel = timeStr(spell.stats.runlength);
                 }
             }
-            items.push(<CastBar key={name} curr={curr} label={label} lineLabel={lineLabel}
-                perpetual={spell.perpetual} onPerpetualClick={this.onPerpetualClick.bind(this, spell)}
-                measure={spell.measure} onMeasureClick={this.onMeasureClick.bind(this, spell)}
-                running={spell.running} onPlayStopClick={this.onPlayStopClick.bind(this, spell)}/>);
+
+            if (spell.running || !spell.optional) {
+                items.push(<CastBar key={name} curr={curr} label={label} lineLabel={lineLabel}
+                    perpetual={spell.perpetual} onPerpetualClick={this.onPerpetualClick.bind(this, spell)}
+                    measure={spell.measure} onMeasureClick={this.onMeasureClick.bind(this, spell)}
+                    running={spell.running} onPlayStopClick={this.onPlayStopClick.bind(this, spell)}/>);
+            }
         }, this);
         return <Widget caption="Zauber" emptytext="Keine Zauber">{items}</Widget>;
     }

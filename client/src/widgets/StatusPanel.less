@@ -1,0 +1,68 @@
+@import "../Colors";
+
+.statusline-bg {
+    clear: both;
+    position: relative;
+}
+
+.statusline-inlinelabel {
+    top: 0;
+    position: absolute;
+    line-height: 1.3rem;
+    padding-left: 0.1rem;
+    margin: 1px;
+}
+
+.statusline-wrap {
+    margin: 0.4rem;
+    min-width: 150px;
+    clear: both;
+}
+
+.statusline-label {
+    font-size: small;
+    padding-left: 2px; 
+    line-height: 1.8rem;
+    white-space: nowrap;
+}
+
+.light {
+	.statusline {
+	    height: 1.2rem;
+	    background-clip: content-box;
+	}
+
+	.tp .statusline {
+		background-color: @color-secondary-1-0;
+	    //background-color: #a0ce00;
+	}
+
+	.sp .statusline {
+		//background-color: @color-primary-0;
+	    background-color: #3C437A;
+	}
+
+	.ap .statusline {
+		//background-color: @color-complement-0;
+		background-color: @color-secondary-2-0;
+	    //background-color: #4169e1;
+	}
+
+	.mp .statusline {
+		//background-color: @color-secondary-2-0;
+	    background-color: #C0C3D7;
+	}
+}
+
+.dark {
+	.statusline {
+	    background: gray;
+	    height: 1.2rem;
+	    background-clip: content-box;
+	}
+
+	.statusline-bg {
+	    background-color: #373838;
+	    border: 1px solid #373838;
+	}
+}

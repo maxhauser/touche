@@ -61,7 +61,7 @@ gulp.task('webpack', ['clean'], function(cb) {
             fallback: path.join(__dirname, 'client')
         },
         plugins: [
-            new webpack.DefinePlugin({DEBUG: !!argv.debug}),
+            new webpack.DefinePlugin({DEBUG: !!argv.debug, 'process.env.NODE_ENV':argv.debug?'"debug"':'"production"'}),
             new CompressionPlugin({
                 asset: "{file}",
                 algorithm: "gzip",
@@ -69,7 +69,7 @@ gulp.task('webpack', ['clean'], function(cb) {
             })
         ],
         module: {
-            noParse: [/react\-with\-addons(\.min)?\.js/, /lodash(\.min)?\.js/],
+            //noParse: [/react\-with\-addons(\.min)?\.js/, /lodash(\.min)?\.js/],
             loaders: [{
                 test: /\.css$/,
                 loader: 'style!css'
@@ -83,6 +83,9 @@ gulp.task('webpack', ['clean'], function(cb) {
             }, {
                 test: /\.less$/,
                 loader: 'style!css!less' 
+            }, {
+                test: /\.json$/,
+                loader: 'json5' 
             }],
             postLoaders: [{
                 test: /\.js/,
@@ -105,7 +108,7 @@ gulp.task('webpack', ['clean'], function(cb) {
         config.devtool = 'sourcemap';
     } else {
         config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-        config.resolve.alias['react$'] = 'react/react-with-addons.min.js';
+        //config.resolve.alias['react$'] = 'react/react-with-addons.min.js';
         config.resolve.alias['lodash$'] = 'lodash/dist/lodash.min.js';
     }
 

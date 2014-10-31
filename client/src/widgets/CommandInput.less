@@ -1,0 +1,61 @@
+@import '../Colors.less';
+
+.command-input-wrapper {
+    display: table-cell;
+
+    min-height: 2em;
+    position: relative;
+    padding: 0 !important;
+}
+
+.command-input-wrapper.compose {
+    min-height: 140px;
+}
+
+.compose .command-input {
+    min-height: 180px;
+    overflow: auto;
+}
+
+.command-compose-actions {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    display: none;
+}
+
+.compose .command-compose-actions {
+    display: block;
+}
+
+.command-compose-actions > div {
+    display: inline-block;
+    margin: 8px;
+}
+
+.command-input {
+    font-family: monospace;
+    font-size: 12pt;
+    padding: 0 0.5rem;
+}
+
+.command-input:focus {
+    outline: none;
+}
+
+.dark {
+	.input-suggestions {
+	    background-color: #565757;
+	}
+}
+
+.light {
+	.command-input-wrapper {
+	    background-color: @color-primary-2;
+	    //background-color: #FFFCD6;
+	}
+
+	.input-suggestions {
+	    background-color: #ccc;
+	}
+}

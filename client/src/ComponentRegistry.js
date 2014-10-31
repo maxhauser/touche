@@ -1,13 +1,3 @@
-/*
-
-Plugins.define('bla', 1);
-Plugins.define('bla', function(require) {
-
-    var hallo = require('hallo');
-
-});
-*/
-
 var ComponentRegistry = function() {
 	this.require = this.require.bind(this);
 	this.registrations = [];

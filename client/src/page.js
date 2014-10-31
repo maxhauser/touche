@@ -1,4 +1,3 @@
-/**@jsx React.DOM*/
 /*global EventSource:false*/
 var React = require('react');
 var _ = require('lodash');
@@ -231,7 +230,8 @@ var Page = React.createClass({
         }
 
         var widget = Registry.require('widget.' + name);
-        return widget(attribs, content);
+        attribs.children = content;
+        return React.createElement(widget, attribs);
     },
     render: function() {
         this.ids = {};

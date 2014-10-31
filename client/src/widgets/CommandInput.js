@@ -7,6 +7,7 @@ var Session = require('../Session');
 var Trie = require('../trie');
 var env = require('../Environment');
 var StringUtils = require('../StringUtils');
+require('./CommandInput.less');
 
 var exits = {
     87: { dir: 'norden', def: 'n' }, // w
@@ -112,7 +113,7 @@ var CommandInput = React.createClass({
         return (
             <div title="Kommandoeingabe" className={"topcoat-text-input--large command-input-wrapper " + (this.state.compose?'compose':'')} onClick={this.onWrapperClick}>
                 <div className="command-input" title="Kommandoeingabe">
-                    <span ref="input" aria-live="assertive" aria-role="textbox" title="Kommandoeingabe" style={{'padding-left':'1px','white-space':'pre-wrap'}} contentEditable={true}
+                    <span ref="input" aria-live="assertive" aria-role="textbox" title="Kommandoeingabe" style={{paddingLeft:'1px',whiteSpace:'pre-wrap'}} contentEditable={true}
                         onKeyDown={this.keydown} onKeyPress={this.keypress} onPaste={this.handlePasteContent}/>
                     <span aria-role="presentation" className={'input-suggestions' + (suggestion?'':' hidden')}>{suggestion}</span>
                 </div>
@@ -166,8 +167,10 @@ var CommandInput = React.createClass({
         if (this.state.compose)
             return;
 
-        if (e.charCode >= 127 && [228, 196, 246, 214, 252, 220, 223].indexOf(e.charCode) === -1)
-            return false;
+        if (e.charCode >= 127 && [228, 196, 246, 214, 252, 220, 223].indexOf(e.charCode) === -1) {
+            e.stopPropagation();
+            return;
+        }
 
         setTimeout(this.updateSuggestion, 0);
     },
@@ -274,7 +277,7 @@ var CommandInput = React.createClass({
                     this.clearSuggestion();
                     this.selectAll(input);
                     this.setState({historyIndex: -1});
-                    return false;
+                    return;
                 }
                 input.textContent = '';
 
@@ -286,8 +289,10 @@ var CommandInput = React.createClass({
 
                 this.setState({historyIndex: -1});
 
-                if (value[0] == env.scriptMarker)
-                    return this.clearSuggestion();
+                if (value[0] == env.scriptMarker) {
+                    this.clearSuggestion();
+                    return;
+                }
 
                 // add all words to the trie
                 var trie = this.getTrie();
@@ -307,7 +312,7 @@ var CommandInput = React.createClass({
                 });
 
                 this.clearSuggestion();
-                return false;
+                break;
 
             case 32:
             case 39:
@@ -316,16 +321,16 @@ var CommandInput = React.createClass({
 
                 var suggestion = this.currentCandidate();
                 if (suggestion && this.cursorAtEnd(rawValue)) {
+                    e.preventDefault();
                     rawValue += suggestion;
                     if (e.keyCode === 32)
                         rawValue += " ";
                     input.textContent = rawValue;
                     this.moveCaretToEnd(input);
                     this.updateSuggestion();
-                    return false;
                 }
 
-                return;
+                break;
 
             case 8: // backspace
                 setTimeout(this.updateSuggestion, 0);
@@ -333,36 +338,36 @@ var CommandInput = React.createClass({
 
             case 38: // up
                 if (e.ctrlKey) {
+                    e.preventDefault();
                     var candidates = this.state.candidates;
                     ix = this.state.candidateIndex + 1;
                     if (ix < candidates.length)
                         this.setState({candidateIndex: ix});
-                    return false;
                 } else if (historyIndex < commandHistory.length - 1) {
+                    e.preventDefault();
                     historyIndex++;
                     value = commandHistory[historyIndex];
                     this.setState({historyIndex: historyIndex});
                     input.textContent = value;
                     this.selectAll(input);
                     this.clearSuggestion();
-                    return false;
                 }
                 break;
 
             case 40: // down
                 if (e.ctrlKey) {
+                    e.preventDefault();
                     ix = this.state.candidateIndex - 1;
                     if (ix >= 0)
                         this.setState({candidateIndex: ix});
-                    return false;
                 } else if (historyIndex >= 0) {
+                    e.preventDefault();
                     historyIndex--;
                     value = historyIndex >= 0 ? commandHistory[historyIndex] : '';
                     this.setState({historyIndex: historyIndex});
                     input.textContent = value;
                     this.selectAll(input);
                     this.clearSuggestion();
-                    return false;
                 }
                 break;
         }

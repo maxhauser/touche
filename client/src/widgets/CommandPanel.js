@@ -2,6 +2,7 @@
 
 var React = require('react');
 var env = require('../Environment');
+require('./CommandPanel.less');
 
 var CommandItem = React.createClass({
 	handleClick: function(event) {
@@ -57,10 +58,10 @@ var CommandPanel = React.createClass({
 		env.off('disconnected', this.onDisconnected);
 	},
 	renderCommand: function(command){
-		return <CommandItem command={command}/>;
+		return <CommandItem key={command.cmd} command={command}/>;
 	},
 	render: function() {
-		return this.transferPropsTo(<div className="commands-widget">
+		return (<div {...this.props} className="commands-widget">
 				<ul className="commands-widget-list">{this.state.commands.map(this.renderCommand)}</ul>
 			</div>);
 	}

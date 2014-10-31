@@ -3,8 +3,8 @@ package session
 import (
 	"bufio"
 
-	"code.google.com/p/go-charset/charset"
-	_ "code.google.com/p/go-charset/data"
+	//"code.google.com/p/go-charset/charset"
+	//_ "code.google.com/p/go-charset/data"
 
 	"compress/gzip"
 	"compress/zlib"
@@ -77,8 +77,9 @@ var (
 	ErrInvalidCommand = errors.New("invalid command.")
 )
 
-var translator charset.Translator
+//var translator charset.Translator
 
+/*
 func init() {
 	var err error
 	translator, err = charset.TranslatorFrom("iso-8859-1")
@@ -86,6 +87,7 @@ func init() {
 		panic(err)
 	}
 }
+*/
 
 var idEncoding = base32.NewEncoding("123456789abcdefghijklmnopqrstuvw")
 
@@ -431,10 +433,12 @@ func (sess *Session) writeSocketRaw(event string, data []byte) error {
 		return err
 	}
 
-	_, data, err = translator.Translate(data, true)
-	if err != nil {
-		return err
-	}
+	/*
+		_, data, err = translator.Translate(data, true)
+		if err != nil {
+			return err
+		}
+	*/
 
 	// copy buffer
 	var buf = make([]byte, len(data))

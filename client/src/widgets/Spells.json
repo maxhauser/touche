@@ -1,0 +1,176 @@
+{
+	"blitz": {
+		caption: "Blitz",
+		zirkel: "Luft",
+		klasse: "Kampf",
+		zp: [35, 55, 80, 120, 150],
+		mana: [44, 66, 100, 150, 172],
+		ap: [0, 0, 0, 0, 0],
+		haende: 1,
+		aktionen: false
+	},
+	"dornenpfeile": {
+		caption: "Dornenpfeile",
+		zirkel: "Leben",
+		klasse: "Kampf",
+		zp: [30],
+		mana: [35],
+		ap: [0],
+		haende: 1,
+		aktionen: true
+	},
+	"eispfeile": {
+		caption: "Eispfeile",
+		zirkel: "Wasser",
+		klasse: "Kampf",
+		zp: [30, 45],
+		mana: [30, 45],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"eissturm": {
+		caption: "Eissturm",
+		zirkel: "Wasser",
+		klasse: "Kampf",
+		zp: [50, 125, 175],
+		mana: [30, 54, 81],
+		ap: [0, 0, 0],
+		haende: 2,
+		aktionen: false,
+		gruppe: true
+	},
+	"entzuenden": {
+		caption: "Entzünden",
+		zirkel: "Feuer",
+		klasse: "Kampf",
+		zp: [27, 45],
+		mana: [62, 100],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"erdbeben": {
+		caption: "Erdbeben",
+		zirkel: "Erde",
+		klasse: "Kampf",
+		zp: [30, 75],
+		mana: [36, 68],
+		ap: [0, 0],
+		haende: 2,
+		aktionen: false,
+		gruppe: true
+	},
+	"feuerball": {
+		caption: "Feuerball",
+		zirkel: "Feuer",
+		klasse: "Kampf",
+		zp: [10, 20],
+		mana: [12, 24],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"feuerstrahl": {
+		caption: "Feuerstrahl",
+		zirkel: "Feuer",
+		klasse: "Kampf",
+		zp: [20, 40, 60, 80, 100],
+		mana: [40, 80, 120, 160, 200],
+		ap: [0, 0, 0, 0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"funkenentladung": {
+		caption: "Funkenentladung",
+		zirkel: "Luft",
+		klasse: "Kampf",
+		zp: [10, 20, 30, 40, 50],
+		mana: [20, 24, 38, 50, 62],
+		ap: [0, 0, 0, 0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"lavastoss": {
+		caption: "Lavastoss",
+		zirkel: "Feuer",
+		klasse: "Kampf",
+		zp: [35, 60, 90, 120, 150],
+		mana: [44, 75, 102, 138, 162],
+		ap: [0, 0, 0, 0, 0],
+		haende: 1,
+		aktionen: false
+	},
+	"lebensaugen": {
+		caption: "Lebensaugen",
+		zirkel: "Tod",
+		klasse: "Kampf",
+		zp: [50, 85],
+		mana: [50, 85],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"sandsturm": {
+		caption: "Sandsturm",
+		zirkel: "Erde",
+		klasse: "Kampf",
+		zp: [10, 20],
+		mana: [12, 24],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true,
+		gruppe: true
+	},
+	"verwirrung": {
+		caption: "Verwirrung",
+		zirkel: "Wasser",
+		klasse: "Kampf",
+		zp: [70, 110],
+		mana: [340, 520],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"vortex": {
+		caption: "Vortex",
+		zirkel: "Tod",
+		klasse: "Kampf",
+		zp: [27, 45],
+		mana: [62, 100],
+		ap: [0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"wasserschwall": {
+		caption: "Wasserschwall",
+		zirkel: "Wasser",
+		klasse: "Kampf",
+		zp: [27, 45],
+		mana: [62, 100],
+		ap: [0, 0],
+		haende: 2,
+		aktionen: true
+	},
+	"wasserstrahl": {
+		caption: "Wasserstrahl",
+		zirkel: "Wasser",
+		klasse: "Kampf",
+		zp: [20, 40, 60, 80, 100],
+		mana: [40, 80, 120, 160, 200],
+		ap: [0, 0, 0, 0, 0],
+		haende: 1,
+		aktionen: true
+	},
+	"wirbelsturm": {
+		caption: "Wirbelsturm",
+		zirkel: "Luft",
+		klasse: "Kampf",
+		zp: [50, 125, 160],
+		mana: [36, 72, 108],
+		ap: [0, 0, 0],
+		haende: 2,
+		aktionen: false,
+		gruppe: true
+	}
+}

@@ -17,18 +17,20 @@ var PointerLight = React.createClass({
 	render: function() {
 		var textstyle = {textAnchor:'middle',fontFamily:'President',fontSize:'1.4rem'};
 		var linestyle = {strokeWidth:2,stroke:'black',fill:'none'};
+		var style = {};
 		if (this.props.cmd) {
 			textstyle.cursor = 'pointer';
 			textstyle.textDecoration = 'underline';
 			textstyle.opacity = 1;
 			linestyle.opacity = 1;
+			style.cursor = 'pointer';
 		} else {
 			textstyle.opacity = 0.25;
 			linestyle.opacity = 0.25;
 		}
 		return (
 			<g transform={"rotate(" + this.props.rotate + ")" + (this.props.scale?" scale(" + this.props.scale + ")":"")}
-				onClick={this.handleClick} className={this.props.cmd?'compass-part':''}>
+				onClick={this.handleClick} style={style}>
 				<polyline points="15 -15 0 -80 -15 -15" fill="white"/>
 				<path d="M15 -15 L0 -80 -15 -15" style={linestyle} className="glow"/>
 				<text transform={"rotate(" + -this.props.rotate + " 0 -95)"} x={0} y={-88} style={textstyle} className="glow">{this.props.text}</text>
@@ -59,9 +61,9 @@ var PointerDark = React.createClass({
 
 		return (
 			<g transform={"rotate(" + this.props.rotate + ")" + (this.props.scale?" scale(" + this.props.scale + ")":"")}
-				onClick={this.handleClick} style={style} className={this.props.cmd?'compass-part':''}>
-				<polygon points="0 -80 -15 -15 0 0" fill="white" stroke="black" style={{'stroke-width':2}}/>
-				<polygon points="0 -80 15 -15 0 0" fill="black" stroke="black" style={{'stroke-width':2}}/>
+				onClick={this.handleClick} style={style}>
+				<polygon points="0 -80 -15 -15 0 0" fill="white" stroke="black" style={{strokeWidth:2}}/>
+				<polygon points="0 -80 15 -15 0 0" fill="black" stroke="black" style={{strokeWidth:2}}/>
 				{textel}
 			</g>
 		);

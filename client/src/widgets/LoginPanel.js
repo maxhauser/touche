@@ -56,14 +56,14 @@ var LoginPanel = React.createClass({
     render: function() {
         var title;
         if (this.state.state !== 'connected') {
-            title = (<div className="connection-title">
+            title = (<div key="title" className="connection-title">
                         <h3 className="avalon-text">Avalon</h3>
                      </div>);
         }
         return (<Widget caption="Verbindung" className={"login-widget " + this.state.state}>
             {title}
                 {(this.state.state !== 'connected' && env.lightUI)?[
-                <form action="index.html" className="connection-form" method="POST" onSubmit={this.handleDirectConnect} autoComplete="on">
+                <form key="form" action="index.html" className="connection-form" method="POST" onSubmit={this.handleDirectConnect} autoComplete="on">
                 <input key="new" type="submit" className="topcoat-button--large--cta" onClick={this.handleDirectConnect} value="sofort spielen"/>
                 <div key="sep" className="seperator">
                     <div className="line"/>

@@ -17,7 +17,7 @@ var Widget = React.createClass({
 		var children = this.props.children;
 		var hasChildren = children && (children.length !== 0 || 'undefined' === typeof children.length);
 
-		return this.transferPropsTo(<div className="widget">
+		return (<div {...this.props} className={"widget " + (this.props.className||"")}>
 				<small>{this.props.caption}</small>
 				<div className="topcoat-text-input--large widget-body">{hasChildren?children:this.props.emptytext}</div>
 			</div>);

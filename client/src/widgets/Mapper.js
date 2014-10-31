@@ -171,7 +171,7 @@ var Mapper = React.createClass({
 			y1={y}
 			x2={x + d[0]*len}
 			y2={y + d[1]*len}
-			style={{stroke:'#888','stroke-width':"2"}}/>;
+			style={{stroke:'#888',strokeWidth:"2"}}/>;
 	},
 	renderHalfExit: function(key, coords, d) {
 		var fieldSize = this.props.fieldSize;
@@ -184,7 +184,7 @@ var Mapper = React.createClass({
 			y1={y}
 			x2={x + d[0]*len}
 			y2={y + d[1]*len}
-			style={{stroke:'#ccc','stroke-width':"2"}}/>;
+			style={{stroke:'#ccc',strokeWidth:"2"}}/>;
 	},
 	renderExit: function(key, coords, d) {
 		var fieldSize = this.props.fieldSize;
@@ -196,7 +196,7 @@ var Mapper = React.createClass({
 			y1={y}
 			x2={x + d[0]*fieldSize}
 			y2={y + d[1]*fieldSize}
-			style={{stroke:'#ccc','stroke-width':"2"}}/>;
+			style={{stroke:'#ccc',strokeWidth:"2"}}/>;
 	},
 	renderRoom: function(room, coords) {
 		var props = this.props;

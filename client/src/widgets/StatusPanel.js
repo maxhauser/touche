@@ -5,17 +5,18 @@ var AppDispatcher = require('../AppDispatcher');
 var _ = require('lodash');
 var Widget = require('./Widget');
 var env = require('../Environment');
+require('./StatusPanel.less');
 
 var StatusBar = React.createClass({
 	render: function() {
-		var perc = this.props.enabled ? (100 - (this.props.curr * 100 / this.props.max)) : 0;
+		var perc = this.props.enabled ? Math.floor(100 - (this.props.curr * 100 / this.props.max)) : 0;
 		var props = this.props;
 		var styles = {};
 		if (this.props.direction === 'horizontal')
 			styles.display = 'inline-block';
 		return <div className={"statusline-wrap " + (this.props.className||'')} style={styles}>
 			<div className="statusline-bg">
-				<div className="statusline" style={{'padding-right': perc + '%'}}/>
+				<div className="statusline" style={{paddingRight: perc + '%'}}/>
 			</div>
 			<span className="statusline-label">{props.label + ": " + props.curr + " (" + (props.max||'?') + ")"}</span>
 		</div>;

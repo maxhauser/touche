@@ -63,6 +63,10 @@ if (/[!&]dev=true/.test(location.href)) {
 	cns[2].children.splice(-1,0,'Dropbox');
 }
 
+if (/[!&]fixedScroll=true/.test(location.href)) {
+	env.fixedScroll = true;
+}
+
 var config = {
 	plugins: ['scripting', 'automapper', 'audio'],
 	ui: {
