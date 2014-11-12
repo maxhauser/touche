@@ -95,6 +95,33 @@ var spells = {
         end: /^Deine Feueraura loest sich auf\./,
         optional: true
     },
+    erdaura: {
+        name: 'erdaura',
+        caption: 'Erdaura',
+        run: 'zz erdaura',
+        stop: 'z stop erdaura',
+        start: /^Aus der Erde loesen sich kleine Partikel und bilden einen Schleier/,
+        end: /^Dein Staubschleier loest sich auf./,
+        optional: true
+    },
+    luftaura: {
+        name: 'luftaura',
+        caption: 'Luftaura',
+        run: 'zz luftaura',
+        stop: 'z stop luftaura',
+        start: /^Du bist in den Watteflocken kaum noch auszumachen./,
+        end: /^Deine Watteflocken loesen sich auf./,
+        optional: true
+    },
+    wasseraura: {
+        name: 'wasseraura',
+        caption: 'Wasseraura',
+        run: 'zz wasseraura',
+        stop: 'z stop wasseraura',
+        start: /^Es regnet aus der Wolke auf Dich herab, die Regentropfen treffen/,
+        end: /^Dein Wasserschleier loest sich auf./,
+        optional: true
+    },
     sternenstaub: {
         name: 'sternenstaub',
         caption: 'Sternenstaub',

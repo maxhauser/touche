@@ -20,8 +20,6 @@ var MxpParser = Component.define(Parser, TelnetParser);
 
 var StringUtils = require('../StringUtils');
 
-var StringUtils = require('../StringUtils');
-
 function get(el, contextel, className) {
 	while(el && el !== document.documentElement && el !== contextel) {
 		if (el.classList.contains(className))

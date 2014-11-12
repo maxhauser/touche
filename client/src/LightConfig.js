@@ -66,7 +66,7 @@ if (DEBUG) {
 
 
 var config = {
-	plugins: [],
+	plugins: ['scripting'],
 	ui: {
 		className: 'light',
 		style: {
@@ -76,9 +76,5 @@ var config = {
 		children: cns
 	},
 };
-
-if (DEBUG) {
-	config.plugins.push('scripting');
-}
 
 module.exports = config;

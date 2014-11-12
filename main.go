@@ -57,14 +57,34 @@ func main() {
 		ioutil.WriteFile(*pidFile, []byte(strconv.FormatInt(int64(pid), 10)), os.FileMode(0644))
 	}
 
-	var handler = http.FileServer(http.Dir("./dist"))
 	http.HandleFunc("/", func(writer http.ResponseWriter, req *http.Request) {
+
 		if req.URL.Path != "" && req.URL.Path != "/" {
 			writer.Header().Add("Cache-Control", "max-age=31536000, public, no-transform")
-			writer.Header().Add("Content-Encoding", "gzip")
 		}
 
-		handler.ServeHTTP(writer, req)
+		gzipOk := false
+		acceptedEncodings := strings.Split(req.Header.Get("Accept-Encoding"), ",")
+		for _, encoding := range acceptedEncodings {
+			if encoding == "gzip" {
+				gzipOk = true
+				break
+			}
+		}
+
+		name := "dist" + req.URL.Path
+		if gzipOk {
+			file, err := os.Open(name + ".gz")
+
+			if err == nil {
+				writer.Header().Add("Content-Encoding", "gzip")
+				stat, _ := file.Stat()
+				http.ServeContent(writer, req, name, stat.ModTime(), file)
+				file.Close()
+				return
+			}
+		}
+		http.ServeFile(writer, req, name)
 	})
 
 	notfound := http.NotFoundHandler()

@@ -35,12 +35,11 @@ TablePrinter.prototype.set = function(text, x, y) {
 TablePrinter.prototype.print = function() {
 	var cols = this.cols;
 
-	var totalwidth = _.reduce(cols, function(sum, col) { return sum + col.width + 1; }, 0) + 1;
-	var text = repeatChar(totalwidth, '-') + "\n";
+	var text = this.printSep();
 
 	text += this.printLine(_.pluck(cols, 'title'));
 
-	text += repeatChar(totalwidth, '-') + "\n";
+	text += this.printSep();
 
 	var lines = this.lines;
 	for (var i=0;i<lines.length;i++) {
@@ -48,9 +47,18 @@ TablePrinter.prototype.print = function() {
 		text += this.printLine(line);
 	}
 
-	text += repeatChar(totalwidth, '-') + "\n";
+	text += this.printSep();
 
 	return text;
+};
+
+TablePrinter.prototype.printSep = function() {
+	var cols = this.cols;
+	var text = '+';
+	for (var j=0;j<cols.length;j++) {
+		text += repeatChar(cols[j].width, '-') + '+';
+	}
+	return text + '\n';
 };
 
 TablePrinter.prototype.printLine = function(line) {

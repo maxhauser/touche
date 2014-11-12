@@ -1,5 +1,5 @@
-/**@jsx React.DOM */
 var EventEmitter = require('events').EventEmitter;
+var assign = require('react/lib/Object.assign');
 
 function Queue(name) {
     this.name = name;
@@ -7,7 +7,7 @@ function Queue(name) {
     this.running = false;
 }
 
-Object.assign(Queue.prototype, EventEmitter.prototype);
+assign(Queue.prototype, EventEmitter.prototype);
 
 Queue.prototype.unshift = function(item) {
     this.items.unshift(item);
@@ -35,8 +35,10 @@ Queue.prototype.run = function() {
 
         if (this.items.length === 0) {
             this.emit('empty');
-            if (this.items.length === 0)
+            if (this.items.length === 0) {
+                this.running = false;
                 return;
+            }
         }
 
         var item = this.items.shift();

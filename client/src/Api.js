@@ -6,6 +6,15 @@ var Pathfinder = require('./Pathfinder');
 var Alertify = require('./alertify');
 var Queue = require('./Queue');
 
+var suspended = false;
+
+function wrap(fn) {
+	return function() {
+		if (!suspended)
+			fn.apply(this, arguments);
+	};
+}
+
 var ApiClass = function(name, parent) {
 	this.name = name;
 	if (Object.defineProperty)
@@ -112,6 +121,11 @@ function stringHandler(api, text) {
 
 var mych = env.linePipeline.add();
 mych.receive(function(line) {
+	if (suspended) {
+		mych.send(line);
+		return;
+	}
+
 	var swallow = false;
 	var text = getText(line);
 
@@ -175,6 +189,12 @@ ch.receive(function(cmd) {
 
 _.assign(Api.fn, {
 	env: env,
+	suspend: function() {
+		suspended = true;
+	},
+	resume: function() {
+		suspended = false;
+	},
 	on: function(eventName, handler) {
 		var eventHandlers = this.state.eventHandlers || (this.state.eventHandlers = []);
 		eventHandlers.push({eventName: eventName, handler: handler});
@@ -198,7 +218,7 @@ _.assign(Api.fn, {
 		Dispatcher.fire('ast', {type: 'echo', text: text});
 	},
 	ticker: function(name, seconds, handler) {
-		var interval = window.setInterval(handler, seconds * 1000);
+		var interval = window.setInterval(wrap(handler), seconds * 1000);
 		var tickers = this.state.tickers || (this.state.tickers = {});
 		var ticker = tickers[name];
 		if (ticker) {
@@ -243,7 +263,7 @@ _.assign(Api.fn, {
 			name = undefined;
 		}
 
-		var timeout = window.setTimeout(handler, seconds * 1000);
+		var timeout = window.setTimeout(wrap(handler), seconds * 1000);
 		if (name) {
 			var delay = delays[name];
 			if (delay)

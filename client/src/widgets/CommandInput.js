@@ -140,8 +140,13 @@ var CommandInput = React.createClass({
 
         if (text) {
             var el = this.refs.input.getDOMNode();
-            el.textContent = text;
-            this.moveCaretToEnd(el);
+
+            var selection = document.getSelection();
+            var range = selection.getRangeAt(0);
+            selection.deleteFromDocument();
+            var textel = document.createTextNode(text);
+            range.insertNode(textel);
+            this.moveCaretToEnd(textel);
         }
     },
     onEditorCancel: function() {
@@ -166,6 +171,7 @@ var CommandInput = React.createClass({
     keypress: function(e) {
         if (this.state.compose)
             return;
+        }
 
         if (e.charCode >= 127 && [228, 196, 246, 214, 252, 220, 223].indexOf(e.charCode) === -1) {
             e.stopPropagation();

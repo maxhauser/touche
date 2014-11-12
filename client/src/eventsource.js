@@ -1,3 +1,5 @@
+/* jshint worker:true */
+
 /**
  * eventsource.js
  * Available under MIT License (MIT)
@@ -457,6 +459,8 @@
   EventSource.prototype = new F();
   F.call(EventSource);
 
+  module.exports = EventSource;
+/*
   if (Transport) {
     // Why replace a native EventSource ?
     // https://bugzilla.mozilla.org/show_bug.cgi?id=444328
@@ -467,5 +471,6 @@
     global.NativeEventSource = global.EventSource;
     global.EventSource = EventSource;
   }
+  */
 
-}(window));
+}(self));

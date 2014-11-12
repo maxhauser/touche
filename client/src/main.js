@@ -48,7 +48,7 @@ var React = require('react');
 var Page = require('./page');
 var OldBrowser = require('./oldbrowser');
 
-if (DEBUG) {
+if (process.env.NODE_ENV !== 'production') {
 	window.React = React;
 }
 

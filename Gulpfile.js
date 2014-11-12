@@ -4,6 +4,7 @@ var path = require('path');
 var gutil = require('gulp-util');
 var rimraf = require('gulp-rimraf');
 var inject = require('gulp-inject');
+var glob = require('glob');
 
 var webpack = require('webpack');
 var CompressionPlugin = require('compression-webpack-plugin');
@@ -53,7 +54,6 @@ gulp.task('webpack', ['clean'], function(cb) {
         resolve: {
             modulesDirectories: ['bower_components', 'node_modules'],
             alias: {
-                //'react$': 'react/react-with-addons.js',
                 'lodash$': 'lodash/dist/lodash.js'
             }
         },
@@ -61,15 +61,12 @@ gulp.task('webpack', ['clean'], function(cb) {
             fallback: path.join(__dirname, 'client')
         },
         plugins: [
-            new webpack.DefinePlugin({DEBUG: !!argv.debug, 'process.env.NODE_ENV':argv.debug?'"debug"':'"production"'}),
-            new CompressionPlugin({
-                asset: "{file}",
-                algorithm: "gzip",
-                minRatio: 100 
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV':argv.debug?'"debug"':'"production"'
             })
         ],
         module: {
-            //noParse: [/react\-with\-addons(\.min)?\.js/, /lodash(\.min)?\.js/],
+            noParse: [/lodash(\.min)?\.js/],
             loaders: [{
                 test: /\.css$/,
                 loader: 'style!css'
@@ -96,7 +93,7 @@ gulp.task('webpack', ['clean'], function(cb) {
         jshint: {
             "globals": {
                 "console": false,
-                "DEBUG": false
+                "__webpack_public_path__": false
             },
             "browser": true,
             "undef": true
@@ -107,8 +104,13 @@ gulp.task('webpack', ['clean'], function(cb) {
         config.debug = true;
         config.devtool = 'sourcemap';
     } else {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-        //config.resolve.alias['react$'] = 'react/react-with-addons.min.js';
+        config.plugins.push(
+            new webpack.optimize.UglifyJsPlugin(),
+            new CompressionPlugin({
+                asset: "{file}.gz",
+                algorithm: "gzip",
+                minRatio: 0.8
+            }));
         config.resolve.alias['lodash$'] = 'lodash/dist/lodash.min.js';
     }
 

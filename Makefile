@@ -29,7 +29,7 @@ clean-client:
 	$(RM) -rf dist
 
 clean-server:
-	$(RM) bin/avalon
+	-$(RM) bin/avalon
 
 clean: clean-client clean-server
 

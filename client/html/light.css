@@ -58,53 +58,6 @@ hr {
     background-color: white;
 }
 
-.seperator {
-    position: relative;
-    width: 100%;
-    height: 2em;
-    line-height: 2em;
-    margin-bottom: 0.5em;
-}
-
-.seperator .line {
-    border-bottom: 2px solid gray;
-    width: 100%;
-    height: 50%;
-    position: absolute;
-}
-
-.seperator .text {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    height: 100%;
-}
-
-.seperator small {
-   background-color: rgb(244, 244, 244); 
-   padding: 0 5px;
-}
-
-.commands-widget-list-item {
-    color: #777;
-}
-
-.goto-suggestion-distance {
-  color: #ccc;
-}
-
-.login-widget.disconnected .widget-body
-{
-    border: 2px solid #888;
-    padding: 1rem;
-    background-color: #f4f4f4;
-}
-
-.login-widget.connected input[type=submit]
-{
-    background-color: white;
-}
-
 .avalon-text {
     font-family: President;
     font-size: 32pt;
@@ -290,9 +243,6 @@ a, a:visited, a:link, a:active {
     overflow-y: auto;
 
     color: #888;
-    border-color: black;
-
-    color: black;
     border-color: black;
 
     padding: 5px;
