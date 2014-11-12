@@ -171,7 +171,6 @@ var CommandInput = React.createClass({
     keypress: function(e) {
         if (this.state.compose)
             return;
-        }
 
         if (e.charCode >= 127 && [228, 196, 246, 214, 252, 220, 223].indexOf(e.charCode) === -1) {
             e.stopPropagation();

@@ -25,6 +25,7 @@
     "jsx-loader": "*",
     "less-loader": "*",
     "lodash": "*",
+    "lodash.defaults": "*",
     "minimist": "*",
     "react": "*",
     "react-tools": "*",

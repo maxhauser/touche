@@ -254,7 +254,6 @@ _.assign(Api.fn, {
 		var aliases = this.state.aliases || (this.state.aliases = {});
 		delete aliases[match.source||match];
 	},
-	*/
 	delay: function(name, seconds, handler) {
 		var delays = this.state.delays || (this.state.delays = {});
 		if ('function' === typeof seconds) {
